@@ -1,0 +1,32 @@
+{
+	"name": "irc-factory",
+	"description": "A library for creating multiple IRC clients and managing them based on simple-irc-socket and irc-message",
+	"version": "0.0.2",
+	"author": "Ricki Hastings <ricki@ircanywhere.com>",
+	"contributors": [
+		{
+			"name": "Ricki Hastings",
+			"email": "ricki@ircanywhere.com"
+		}
+	],
+	"dependencies": {
+		"eventemitter2": "0.4.13",
+		"irc-message": "0.1.2",
+		"simple-irc-socket": "https://github.com/rickihastings/simple-irc-socket/tarball/master"
+	},
+	"repository": {
+		"type": "git",
+		"url": "http://github.com/ircanywhere/irc-factory"
+	},
+	"bugs": {
+		"mail": "support@ircanywhere.com",
+		"url": "http://github.com/ircanywhere/irc-factory/issues"
+	},
+	"main": "lib/main",
+	"licenses": [
+		{
+			"type": "MIT",
+			"url": "http://github.com/ircanywhere/irc-factory/raw/master/LICENSE"
+		}
+	]
+}
