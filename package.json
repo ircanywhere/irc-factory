@@ -9,6 +9,11 @@
 			"email": "ricki@ircanywhere.com"
 		}
 	],
+	"devDependencies": {
+    	"mocha": "1.15.1",
+    	"should": "2.1.0",
+    	"sinon": "1.7.3"
+    },
 	"dependencies": {
 		"eventemitter2": "0.4.13",
 		"irc-message": "0.1.2",
