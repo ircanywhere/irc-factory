@@ -27,6 +27,9 @@
 		"mail": "support@ircanywhere.com",
 		"url": "http://github.com/ircanywhere/irc-factory/issues"
 	},
+	"scripts": {
+		"test": "make test"
+  	},
 	"main": "lib/main",
 	"licenses": [
 		{
