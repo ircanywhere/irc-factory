@@ -107,6 +107,29 @@ describe('capabilities event', function () {
 	});
 });
 
+describe('motd event', function () {
+	function setup() {
+		MockGenericSocket.messages = [
+			':sendak.freenode.net 375 testbot :- sendak.freenode.net Message of the Day -',
+			':sendak.freenode.net 372 testbot :- Welcome to moorcock.freenode.net in Texas, USA. Thanks to',
+			':sendak.freenode.net 372 testbot :- Kodingen (http://kodingen.com) for sponsoring this server!',
+			':sendak.freenode.net 376 testbot :End of /MOTD command.'
+		];
+		var socket = new Client('key', network, MockGenericSocket);
+	};
+
+	it('motd should be correct', function (done) {
+		setup();
+		Events.once('key.motd', function(o) {
+			o.should.eql(['- sendak.freenode.net Message of the Day -',
+				'- Welcome to moorcock.freenode.net in Texas, USA. Thanks to',
+				'- Kodingen (http://kodingen.com) for sponsoring this server!',
+				'End of /MOTD command.']);
+			done();
+		});
+	});
+});
+
 describe('topic event', function () {
 	function setup() {
 		MockGenericSocket.messages = [
