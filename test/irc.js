@@ -21,18 +21,18 @@ describe('registered event', function () {
 		var socket = new Client('key', network, MockGenericSocket);
 	};
 
-	it('registered event should have nick property', function (done) {
+	it('registered event should have nickname property', function (done) {
 		setup();
 		Events.once('key.registered', function(o) {
-			o.should.have.property('nick');
+			o.should.have.property('nickname');
 			done();
 		});
 	});
 
-	it('registered event nick property should equal testbot', function (done) {
+	it('registered event nickname property should equal testbot', function (done) {
 		setup();
 		Events.once('key.registered', function(o) {
-			o.nick.should.equal('testbot');
+			o.nickname.should.equal('testbot');
 			done();
 		});
 	});
@@ -261,7 +261,7 @@ describe('whois event', function () {
 	it('whois event should have correct object format', function (done) {
 		setup();
 		Events.once('key.whois', function(o) {
-			o.should.have.properties('nick', 'user', 'host', 'realname', 'channels', 'server', 'serverinfo', 'secure');
+			o.should.have.properties('nickname', 'user', 'host', 'realname', 'channels', 'server', 'serverinfo', 'secure');
 			done();
 		});
 	});
@@ -269,7 +269,7 @@ describe('whois event', function () {
 	it('whois object should be correct', function (done) {
 		setup();
 		Events.once('key.whois', function(o) {
-			o.nick.should.equal('rickibalboa');
+			o.nickname.should.equal('rickibalboa');
 			o.user.should.equal('~ricki');
 			o.host.should.equal('unaffiliated/rickibalboa');
 			o.realname.should.equal('Ricki');
@@ -293,7 +293,7 @@ describe('user mode event', function () {
 	it('mode object should have correct format', function (done) {
 		setup();
 		Events.once('key.usermode', function(o) {
-			o.should.have.properties('nick', 'mode');
+			o.should.have.properties('nickname', 'mode');
 			done();
 		});
 	});
@@ -301,7 +301,7 @@ describe('user mode event', function () {
 	it('nick and mode should be correct', function (done) {
 		setup();
 		Events.once('key.usermode', function(o) {
-			o.nick.should.equal('testbot');
+			o.nickname.should.equal('testbot');
 			o.mode.should.equal('+i');
 			done();
 		});
@@ -346,7 +346,7 @@ describe('join event', function () {
 	it('join object should have correct format', function (done) {
 		setup();
 		Events.once('key.join', function(o) {
-			o.should.have.properties('channel', 'nick');
+			o.should.have.properties('channel', 'nickname');
 			done();
 		});
 	});
@@ -363,7 +363,7 @@ describe('part event', function () {
 	it('part object should have correct format', function (done) {
 		setup();
 		Events.once('key.part', function(o) {
-			o.should.have.properties('channel', 'nick', 'message');
+			o.should.have.properties('channel', 'nickname', 'message');
 			done();
 		});
 	});
@@ -372,7 +372,7 @@ describe('part event', function () {
 		setup();
 		Events.once('key.part', function(o) {
 			o.channel.should.equal('#ircanywhere-test');
-			o.nick.should.equal('rickibalboa');
+			o.nickname.should.equal('rickibalboa');
 			done();
 		});
 	});
@@ -397,7 +397,7 @@ describe('kick event', function () {
 	it('kick object should have correct format', function (done) {
 		setup();
 		Events.once('key.kick', function(o) {
-			o.should.have.properties('channel', 'nick', 'kicked', 'message');
+			o.should.have.properties('channel', 'nickname', 'kicked', 'message');
 			done();
 		});
 	});
@@ -405,7 +405,7 @@ describe('kick event', function () {
 	it('values should be correct', function (done) {
 		setup();
 		Events.once('key.kick', function(o) {
-			o.nick.should.equal('rickibalboa');
+			o.nickname.should.equal('rickibalboa');
 			o.channel.should.equal('#ircanywhere-test');
 			o.kicked.should.equal('testbot');
 			o.message.should.equal('bye mate');
@@ -425,7 +425,7 @@ describe('quit event', function () {
 	it('quit object should have correct format', function (done) {
 		setup();
 		Events.once('key.quit', function(o) {
-			o.should.have.properties('nick', 'message');
+			o.should.have.properties('nickname', 'message');
 			done();
 		});
 	});
@@ -433,7 +433,7 @@ describe('quit event', function () {
 	it('values should be correct', function (done) {
 		setup();
 		Events.once('key.quit', function(o) {
-			o.nick.should.equal('rickibalboa');
+			o.nickname.should.equal('rickibalboa');
 			o.message.should.equal('Ping timeout: 240 seconds');
 			done();
 		});
@@ -451,7 +451,7 @@ describe('invite event', function () {
 	it('invite object should have correct format', function (done) {
 		setup();
 		Events.once('key.invite', function(o) {
-			o.should.have.properties('nick', 'channel');
+			o.should.have.properties('nickname', 'channel');
 			done();
 		});
 	});
@@ -459,7 +459,7 @@ describe('invite event', function () {
 	it('values should be correct', function (done) {
 		setup();
 		Events.once('key.invite', function(o) {
-			o.nick.should.equal('rickibalboa');
+			o.nickname.should.equal('rickibalboa');
 			o.channel.should.equal('#ircanywhere-test');
 			done();
 		});
