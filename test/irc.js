@@ -281,3 +281,56 @@ describe('whois event', function () {
 		});
 	});
 });
+
+describe('user mode event', function () {
+	function setup() {
+		MockGenericSocket.messages = [
+			':testbot MODE testbot :+i'
+		];
+		var socket = new Client('key', network, MockGenericSocket);
+	};
+
+	it('mode object should be correct', function (done) {
+		setup();
+		Events.once('key.usermode', function(o) {
+			o.should.have.properties('nick', 'mode');
+			done();
+		});
+	});
+
+	it('nick and mode should be correct', function (done) {
+		setup();
+		Events.once('key.usermode', function(o) {
+			o.nick.should.equal('testbot');
+			o.mode.should.equal('+i');
+			done();
+		});
+	});
+});
+
+describe('mode event', function () {
+	function setup() {
+		MockGenericSocket.messages = [
+			':rickibalboa!~ricki@unaffiliated/rickibalboa MODE #ircanywhere-test +i'
+		];
+		var socket = new Client('key', network, MockGenericSocket);
+	};
+
+	it('mode object should be correct', function (done) {
+		setup();
+		Events.once('key.mode', function(o) {
+			o.should.have.properties('channel', 'mode', 'modeBy');
+			done();
+		});
+	});
+
+	it('channel and mode should be correct', function (done) {
+		setup();
+		Events.once('key.mode', function(o) {
+			o.channel.should.equal('#ircanywhere-test');
+			o.modeBy.should.equal('rickibalboa');
+			o.mode.should.equal('+i');
+			done();
+		});
+	});
+});
