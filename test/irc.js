@@ -290,7 +290,7 @@ describe('user mode event', function () {
 		var socket = new Client('key', network, MockGenericSocket);
 	};
 
-	it('mode object should be correct', function (done) {
+	it('mode object should have correct format', function (done) {
 		setup();
 		Events.once('key.usermode', function(o) {
 			o.should.have.properties('nick', 'mode');
@@ -316,7 +316,7 @@ describe('mode event', function () {
 		var socket = new Client('key', network, MockGenericSocket);
 	};
 
-	it('mode object should be correct', function (done) {
+	it('mode object should have correct format', function (done) {
 		setup();
 		Events.once('key.mode', function(o) {
 			o.should.have.properties('channel', 'mode', 'modeBy');
@@ -330,6 +330,57 @@ describe('mode event', function () {
 			o.channel.should.equal('#ircanywhere-test');
 			o.modeBy.should.equal('rickibalboa');
 			o.mode.should.equal('+i');
+			done();
+		});
+	});
+});
+
+describe('join event', function () {
+	function setup() {
+		MockGenericSocket.messages = [
+			':rickibalboa!~ricki@unaffiliated/rickibalboa JOIN #ircanywhere-test'
+		];
+		var socket = new Client('key', network, MockGenericSocket);
+	};
+
+	it('join object should have correct format', function (done) {
+		setup();
+		Events.once('key.join', function(o) {
+			o.should.have.properties('channel', 'nick');
+			done();
+		});
+	});
+});
+
+describe('part event', function () {
+	function setup() {
+		MockGenericSocket.messages = [
+			':rickibalboa!~ricki@unaffiliated/rickibalboa PART #ircanywhere-test :with a message'
+		];
+		var socket = new Client('key', network, MockGenericSocket);
+	};
+
+	it('part object should have correct format', function (done) {
+		setup();
+		Events.once('key.part', function(o) {
+			o.should.have.properties('channel', 'nick');
+			done();
+		});
+	});
+
+	it('channel and nick should be correct', function (done) {
+		setup();
+		Events.once('key.part', function(o) {
+			o.channel.should.equal('#ircanywhere-test');
+			o.nick.should.equal('rickibalboa');
+			done();
+		});
+	});
+
+	it('message should be correct', function (done) {
+		setup();
+		Events.once('key.part', function(o) {
+			o.message.should.equal('with a message');
 			done();
 		});
 	});
