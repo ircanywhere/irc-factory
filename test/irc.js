@@ -521,3 +521,33 @@ describe('notice event', function () {
 		});
 	});
 });
+
+describe('links event', function () {
+	function setup() {
+		MockGenericSocket.messages = [
+			':adams.freenode.net 364 testbot services. adams.freenode.net :1 Atheme IRC Services',
+			':adams.freenode.net 364 testbot adams.freenode.net adams.freenode.net :0 Budapest, HU, EU',
+			':adams.freenode.net 365 testbot * :End of /LINKS list.',
+		];
+		var socket = new Client('key', network, MockGenericSocket);
+	};
+
+	it('links object should have correct format', function (done) {
+		setup();
+		Events.once('key.links', function(o) {
+			o.should.have.properties('links');
+			done();
+		});
+	});
+
+	it('values should be correct', function (done) {
+		setup();
+		Events.once('key.links', function(o) {
+			o.links.should.have.a.lengthOf(2);
+			o.links[0].server.should.equal('services.');
+			o.links[0].link.should.equal('adams.freenode.net');
+			o.links[0].description.should.equal('1 Atheme IRC Services');
+			done();
+		});
+	});
+});
