@@ -413,3 +413,55 @@ describe('kick event', function () {
 		});
 	});
 });
+
+describe('quit event', function () {
+	function setup() {
+		MockGenericSocket.messages = [
+			':rickibalboa!~ricki@unaffiliated/rickibalboa QUIT :Ping timeout: 240 seconds'
+		];
+		var socket = new Client('key', network, MockGenericSocket);
+	};
+
+	it('quit object should have correct format', function (done) {
+		setup();
+		Events.once('key.quit', function(o) {
+			o.should.have.properties('nick', 'message');
+			done();
+		});
+	});
+
+	it('values should be correct', function (done) {
+		setup();
+		Events.once('key.quit', function(o) {
+			o.nick.should.equal('rickibalboa');
+			o.message.should.equal('Ping timeout: 240 seconds');
+			done();
+		});
+	});
+});
+
+describe('invite event', function () {
+	function setup() {
+		MockGenericSocket.messages = [
+			':rickibalboa!~ricki@unaffiliated/rickibalboa INVITE testbot :#ircanywhere-test'
+		];
+		var socket = new Client('key', network, MockGenericSocket);
+	};
+
+	it('invite object should have correct format', function (done) {
+		setup();
+		Events.once('key.invite', function(o) {
+			o.should.have.properties('nick', 'channel');
+			done();
+		});
+	});
+
+	it('values should be correct', function (done) {
+		setup();
+		Events.once('key.invite', function(o) {
+			o.nick.should.equal('rickibalboa');
+			o.channel.should.equal('#ircanywhere-test');
+			done();
+		});
+	});
+});
