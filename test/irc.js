@@ -106,3 +106,39 @@ describe('capabilities event', function () {
 		});
 	});
 });
+
+describe('topic event', function () {
+	function setup() {
+		MockGenericSocket.messages = [
+			':irc.test.net 332 testbot #ircanywhere :IRCAnywhere, moved to freenode. Development has restarted using meteor.js in 0.2.0 branch https://github.com/ircanywhere/ircanywhere/tree/0.2.0',
+			':irc.test.net 333 testbot #ircanywhere rickibalboa!~ricki@unaffiliated/rickibalboa 1385050715'
+		];
+		var socket = new Client('key', network, MockGenericSocket);
+	};
+
+	it('topic event should have correct object format', function (done) {
+		setup();
+		Events.once('key.topic', function(o) {
+			o.should.have.property('channel');
+			o.should.have.property('topic');
+			o.should.have.property('topicBy');
+			done();
+		});
+	});
+
+	it('topic should be correct', function (done) {
+		setup();
+		Events.once('key.topic', function(o) {
+			o.topic.should.have.equal('IRCAnywhere, moved to freenode. Development has restarted using meteor.js in 0.2.0 branch https://github.com/ircanywhere/ircanywhere/tree/0.2.0');
+			done();
+		});
+	});
+
+	it('topic setter should be correct', function (done) {
+		setup();
+		Events.once('key.topic', function(o) {
+			o.topicBy.should.have.equal('rickibalboa!~ricki@unaffiliated/rickibalboa');
+			done();
+		});
+	});
+});
