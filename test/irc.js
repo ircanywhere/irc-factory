@@ -363,7 +363,7 @@ describe('part event', function () {
 	it('part object should have correct format', function (done) {
 		setup();
 		Events.once('key.part', function(o) {
-			o.should.have.properties('channel', 'nick');
+			o.should.have.properties('channel', 'nick', 'message');
 			done();
 		});
 	});
@@ -381,6 +381,34 @@ describe('part event', function () {
 		setup();
 		Events.once('key.part', function(o) {
 			o.message.should.equal('with a message');
+			done();
+		});
+	});
+});
+
+describe('kick event', function () {
+	function setup() {
+		MockGenericSocket.messages = [
+			':rickibalboa!~ricki@unaffiliated/rickibalboa KICK #ircanywhere-test testbot :bye mate'
+		];
+		var socket = new Client('key', network, MockGenericSocket);
+	};
+
+	it('kick object should have correct format', function (done) {
+		setup();
+		Events.once('key.kick', function(o) {
+			o.should.have.properties('channel', 'nick', 'kicked', 'message');
+			done();
+		});
+	});
+
+	it('values should be correct', function (done) {
+		setup();
+		Events.once('key.kick', function(o) {
+			o.nick.should.equal('rickibalboa');
+			o.channel.should.equal('#ircanywhere-test');
+			o.kicked.should.equal('testbot');
+			o.message.should.equal('bye mate');
 			done();
 		});
 	});
