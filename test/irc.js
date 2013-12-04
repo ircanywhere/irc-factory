@@ -53,21 +53,8 @@ describe('capabilities event', function () {
 		setup();
 		Events.once('key.capabilities', function(o) {
 			o.should.have.property('channel');
-			o.channel.should.have.property('idlength');
-			o.channel.should.have.property('limit');
-			o.channel.should.have.property('modes');
-			o.channel.should.have.property('prefixes');
-			o.channel.should.have.property('types');
-			o.should.have.property('kicklength');
-			o.should.have.property('maxlist');
-			o.should.have.property('maxtargets');
-			o.should.have.property('modes');
-			o.should.have.property('modeForPrefix');
-			o.should.have.property('prefixForMode');
-			o.should.have.property('nicklength');
-			o.should.have.property('topiclength');
-			o.should.have.property('usermodes');
-			o.should.have.property('name');
+			o.channel.should.have.properties('idlength', 'limit', 'modes', 'prefixes', 'types');
+			o.should.have.properties('kicklength', 'maxlist', 'maxtargets', 'modes', 'modeForPrefix', 'prefixForMode', 'nicklength', 'topiclength', 'usermodes', 'name');
 			done();
 		});
 	});
@@ -142,9 +129,7 @@ describe('topic event', function () {
 	it('topic event should have correct object format', function (done) {
 		setup();
 		Events.once('key.topic', function(o) {
-			o.should.have.property('channel');
-			o.should.have.property('topic');
-			o.should.have.property('topicBy');
+			o.should.have.properties('channel', 'topic', 'topicBy');
 			done();
 		});
 	});
@@ -186,8 +171,7 @@ describe('names event', function () {
 	it('names event should have correct object format', function (done) {
 		setup();
 		Events.once('key.names', function(o) {
-			o.should.have.property('channel');
-			o.should.have.property('names');
+			o.should.have.properties('channel', 'names');
 			done();
 		});
 	});
@@ -234,8 +218,7 @@ describe('who event', function () {
 	it('who event should have correct object format', function (done) {
 		setup();
 		Events.once('key.who', function(o) {
-			o.should.have.property('channel');
-			o.should.have.property('who');
+			o.should.have.properties('channel', 'who');
 			done();
 		});
 	});
@@ -278,14 +261,7 @@ describe('whois event', function () {
 	it('whois event should have correct object format', function (done) {
 		setup();
 		Events.once('key.whois', function(o) {
-			o.should.have.property('nick');
-			o.should.have.property('user');
-			o.should.have.property('host');
-			o.should.have.property('realname');
-			o.should.have.property('channels');
-			o.should.have.property('server');
-			o.should.have.property('serverinfo');
-			o.should.have.property('secure');
+			o.should.have.properties('nick', 'user', 'host', 'realname', 'channels', 'server', 'serverinfo', 'secure');
 			done();
 		});
 	});
