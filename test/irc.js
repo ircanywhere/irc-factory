@@ -15,8 +15,18 @@ var network = Object.freeze({
 });
 
 describe('IRC Events', function () {
-	it('registered event should have nick property', function (done) {
+	function setup() {
+		MockGenericSocket.messages = [
+			":irc.test.net 001 testbot :Welcome to the Test IRC Network testbot!testuser@localhost\r\n",
+		];
+		// set our messages for this test
+
 		var socket = new Client('key', network, MockGenericSocket);
+		// create a dud client
+	};
+
+	it('registered event should have nick property', function (done) {
+		setup();
 		Events.once('key.registered', function(o) {
 			o.should.have.property('nick');
 			done();
@@ -24,10 +34,11 @@ describe('IRC Events', function () {
 	});
 
 	it('registered event nick property should equal testbot', function (done) {
-		var socket = new Client('key', network, MockGenericSocket);
+		setup();
 		Events.once('key.registered', function(o) {
 			o.nick.should.equal('testbot');
 			done();
 		});
 	});
+	// run tests
 });
