@@ -235,9 +235,9 @@ describe('who event', function () {
 		setup();
 		Events.once('key.who', function(o) {
 			o.who.should.have.a.lengthOf(14);
-			o.who[0].chan.should.equal('#ircanywhere');
+			o.who[0].channel.should.equal('#ircanywhere');
 			o.who[0].prefix.should.equal('~node@84.12.104.27');
-			o.who[0].nick.should.equal('testbot');
+			o.who[0].nickname.should.equal('testbot');
 			o.who[0].mode.should.equal('H');
 			o.who[0].extra.should.equal('0 node');
 			done();
@@ -261,7 +261,7 @@ describe('whois event', function () {
 	it('whois event should have correct object format', function (done) {
 		setup();
 		Events.once('key.whois', function(o) {
-			o.should.have.properties('nickname', 'user', 'host', 'realname', 'channels', 'server', 'serverinfo', 'secure');
+			o.should.have.properties('nickname', 'username', 'hostname', 'realname', 'channels', 'server', 'serverinfo', 'secure');
 			done();
 		});
 	});
@@ -270,8 +270,8 @@ describe('whois event', function () {
 		setup();
 		Events.once('key.whois', function(o) {
 			o.nickname.should.equal('rickibalboa');
-			o.user.should.equal('~ricki');
-			o.host.should.equal('unaffiliated/rickibalboa');
+			o.username.should.equal('~ricki');
+			o.hostname.should.equal('unaffiliated/rickibalboa');
 			o.realname.should.equal('Ricki');
 			o.channels.should.eql(['@#ircanywhere']);
 			o.server.should.equal('leguin.freenode.net');
@@ -319,7 +319,7 @@ describe('mode event', function () {
 	it('mode object should have correct format', function (done) {
 		setup();
 		Events.once('key.mode', function(o) {
-			o.should.have.properties('channel', 'mode', 'modeBy');
+			o.should.have.properties('nickname', 'username', 'hostname', 'channel', 'mode');
 			done();
 		});
 	});
@@ -328,7 +328,7 @@ describe('mode event', function () {
 		setup();
 		Events.once('key.mode', function(o) {
 			o.channel.should.equal('#ircanywhere-test');
-			o.modeBy.should.equal('rickibalboa');
+			o.nickname.should.equal('rickibalboa');
 			o.mode.should.equal('+i');
 			done();
 		});
@@ -346,7 +346,7 @@ describe('join event', function () {
 	it('join object should have correct format', function (done) {
 		setup();
 		Events.once('key.join', function(o) {
-			o.should.have.properties('channel', 'nickname');
+			o.should.have.properties('channel', 'username', 'hostname', 'nickname');
 			done();
 		});
 	});
@@ -363,7 +363,7 @@ describe('part event', function () {
 	it('part object should have correct format', function (done) {
 		setup();
 		Events.once('key.part', function(o) {
-			o.should.have.properties('channel', 'nickname', 'message');
+			o.should.have.properties('channel', 'username', 'hostname', 'nickname', 'message');
 			done();
 		});
 	});
@@ -397,7 +397,7 @@ describe('kick event', function () {
 	it('kick object should have correct format', function (done) {
 		setup();
 		Events.once('key.kick', function(o) {
-			o.should.have.properties('channel', 'nickname', 'kicked', 'message');
+			o.should.have.properties('channel', 'username', 'hostname', 'nickname', 'kicked', 'message');
 			done();
 		});
 	});
@@ -425,7 +425,7 @@ describe('quit event', function () {
 	it('quit object should have correct format', function (done) {
 		setup();
 		Events.once('key.quit', function(o) {
-			o.should.have.properties('nickname', 'message');
+			o.should.have.properties('nickname', 'username', 'hostname', 'message');
 			done();
 		});
 	});
@@ -451,7 +451,33 @@ describe('invite event', function () {
 	it('invite object should have correct format', function (done) {
 		setup();
 		Events.once('key.invite', function(o) {
-			o.should.have.properties('nickname', 'channel');
+			o.should.have.properties('nickname', 'username', 'hostname', 'channel');
+			done();
+		});
+	});
+
+	it('values should be correct', function (done) {
+		setup();
+		Events.once('key.invite', function(o) {
+			o.nickname.should.equal('rickibalboa');
+			o.channel.should.equal('#ircanywhere-test');
+			done();
+		});
+	});
+});
+
+describe('privmsg event', function () {
+	function setup() {
+		MockGenericSocket.messages = [
+			':rickibalboa!~ricki@unaffiliated/rickibalboa PRIVMSG #ircanywhere-test :hey there, this is a privmsg'
+		];
+		var socket = new Client('key', network, MockGenericSocket);
+	};
+
+	it('privmsg object should have correct format', function (done) {
+		setup();
+		Events.once('key.invite', function(o) {
+			o.should.have.properties('nickname', 'username', 'hostname', 'channel');
 			done();
 		});
 	});
