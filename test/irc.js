@@ -142,3 +142,31 @@ describe('topic event', function () {
 		});
 	});
 });
+
+describe('names event', function () {
+	function setup() {
+		MockGenericSocket.messages = [
+			':irc.test.net 353 testbot = #ircanywhere :testbot Not-002 @rickibalboa @Gnasher Venko [D3M0N] lyska @ChanServ LoganLK JakeXKS Techman TkTech zz_Trinexx Tappy',
+			':irc.test.net 366 testbot #ircanywhere :End of /NAMES list.'
+		];
+		var socket = new Client('key', network, MockGenericSocket);
+	};
+
+	it('names event should have correct object format', function (done) {
+		setup();
+		Events.once('key.names', function(o) {
+			o.should.have.property('channel');
+			o.should.have.property('names');
+			done();
+		});
+	});
+
+	it('names array should be correct', function (done) {
+		setup();
+		Events.once('key.names', function(o) {
+			o.channel.should.equal('#ircanywhere');
+			o.names.should.have.eql(['testbot', 'Not-002', '@rickibalboa',  '@Gnasher', 'Venko', '[D3M0N]', 'lyska', '@ChanServ', 'LoganLK', 'JakeXKS',  'Techman', 'TkTech', 'zz_Trinexx', 'Tappy' ]);
+			done();
+		});
+	});
+});
