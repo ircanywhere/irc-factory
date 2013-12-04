@@ -7,7 +7,7 @@ var should = require('should'),
 var network = Object.freeze({
     nick : 'testbot',
     user : 'testuser',
-    server : 'irc.test.net',
+    server : 'irc.freenode.net',
     realname: 'realbot',
     port: 6667,
     secure: false
@@ -16,7 +16,7 @@ var network = Object.freeze({
 describe('registered event', function () {
 	function setup() {
 		MockGenericSocket.messages = [
-			':irc.test.net 001 testbot :Welcome to the Test IRC Network testbot!testuser@localhost',
+			':sendak.freenode.net 001 testbot :Welcome to the Test IRC Network testbot!testuser@localhost',
 		];
 		var socket = new Client('key', network, MockGenericSocket);
 	};
@@ -41,10 +41,10 @@ describe('registered event', function () {
 describe('capabilities event', function () {
 	function setup() {
 		MockGenericSocket.messages = [
-			':irc.test.net 004 testbot moorcock.freenode.net ircd-seven-1.1.3 DOQRSZaghilopswz CFILMPQSbcefgijklmnopqrstvz bkloveqjfI',
-			':irc.test.net 005 testbot CHANTYPES=# EXCEPTS INVEX CHANMODES=eIbq,k,flj,CFLMPQScgimnprstz CHANLIMIT=#:120 PREFIX=(ov)@+ MAXLIST=bqeI:100 MODES=4 NETWORK=freenode KNOCKSTATUSMSG=@+ CALLERID=g :are supported by this server',
-			':irc.test.net 005 testbot CASEMAPPING=rfc1459 CHARSET=ascii NICKLEN=16 CHANNELLEN=50 TOPICLEN=390 ETRACE CPRIVMSG CNOTICE DEAF=D MONITOR=100 FNC TARGMAX=NAMES:1,LIST:1,KICK:1,WHOIS:1,PRIVMSG:4,NOTICE:4,ACCEPT:,MONITOR: :are supported by this server',
-			':irc.test.net 005 testbot EXTBAN=$,arxz WHOX CLIENTVER=3.0 SAFELIST ELIST=CTU :are supported by this server'
+			':sendak.freenode.net 004 testbot moorcock.freenode.net ircd-seven-1.1.3 DOQRSZaghilopswz CFILMPQSbcefgijklmnopqrstvz bkloveqjfI',
+			':sendak.freenode.net 005 testbot CHANTYPES=# EXCEPTS INVEX CHANMODES=eIbq,k,flj,CFLMPQScgimnprstz CHANLIMIT=#:120 PREFIX=(ov)@+ MAXLIST=bqeI:100 MODES=4 NETWORK=freenode KNOCKSTATUSMSG=@+ CALLERID=g :are supported by this server',
+			':sendak.freenode.net 005 testbot CASEMAPPING=rfc1459 CHARSET=ascii NICKLEN=16 CHANNELLEN=50 TOPICLEN=390 ETRACE CPRIVMSG CNOTICE DEAF=D MONITOR=100 FNC TARGMAX=NAMES:1,LIST:1,KICK:1,WHOIS:1,PRIVMSG:4,NOTICE:4,ACCEPT:,MONITOR: :are supported by this server',
+			':sendak.freenode.net 005 testbot EXTBAN=$,arxz WHOX CLIENTVER=3.0 SAFELIST ELIST=CTU :are supported by this server'
 		];
 		var socket = new Client('key', network, MockGenericSocket);
 	};
@@ -110,8 +110,8 @@ describe('capabilities event', function () {
 describe('topic event', function () {
 	function setup() {
 		MockGenericSocket.messages = [
-			':irc.test.net 332 testbot #ircanywhere :IRCAnywhere, moved to freenode. Development has restarted using meteor.js in 0.2.0 branch https://github.com/ircanywhere/ircanywhere/tree/0.2.0',
-			':irc.test.net 333 testbot #ircanywhere rickibalboa!~ricki@unaffiliated/rickibalboa 1385050715'
+			':sendak.freenode.net 332 testbot #ircanywhere :IRCAnywhere, moved to freenode. Development has restarted using meteor.js in 0.2.0 branch https://github.com/ircanywhere/ircanywhere/tree/0.2.0',
+			':sendak.freenode.net 333 testbot #ircanywhere rickibalboa!~ricki@unaffiliated/rickibalboa 1385050715'
 		];
 		var socket = new Client('key', network, MockGenericSocket);
 	};
@@ -122,6 +122,14 @@ describe('topic event', function () {
 			o.should.have.property('channel');
 			o.should.have.property('topic');
 			o.should.have.property('topicBy');
+			done();
+		});
+	});
+
+	it('channel should be correct', function (done) {
+		setup();
+		Events.once('key.topic', function(o) {
+			o.channel.should.equal('#ircanywhere');
 			done();
 		});
 	});
@@ -146,8 +154,8 @@ describe('topic event', function () {
 describe('names event', function () {
 	function setup() {
 		MockGenericSocket.messages = [
-			':irc.test.net 353 testbot = #ircanywhere :testbot Not-002 @rickibalboa @Gnasher Venko [D3M0N] lyska @ChanServ LoganLK JakeXKS Techman TkTech zz_Trinexx Tappy',
-			':irc.test.net 366 testbot #ircanywhere :End of /NAMES list.'
+			':sendak.freenode.net 353 testbot = #ircanywhere :testbot Not-002 @rickibalboa @Gnasher Venko [D3M0N] lyska @ChanServ LoganLK JakeXKS Techman TkTech zz_Trinexx Tappy',
+			':sendak.freenode.net 366 testbot #ircanywhere :End of /NAMES list.'
 		];
 		var socket = new Client('key', network, MockGenericSocket);
 	};
@@ -161,11 +169,115 @@ describe('names event', function () {
 		});
 	});
 
-	it('names array should be correct', function (done) {
+	it('channel should be correct', function (done) {
 		setup();
 		Events.once('key.names', function(o) {
 			o.channel.should.equal('#ircanywhere');
+			done();
+		});
+	});
+
+	it('names array should be correct', function (done) {
+		setup();
+		Events.once('key.names', function(o) {
 			o.names.should.have.eql(['testbot', 'Not-002', '@rickibalboa',  '@Gnasher', 'Venko', '[D3M0N]', 'lyska', '@ChanServ', 'LoganLK', 'JakeXKS',  'Techman', 'TkTech', 'zz_Trinexx', 'Tappy' ]);
+			done();
+		});
+	});
+});
+
+describe('who event', function () {
+	function setup() {
+		MockGenericSocket.messages = [
+			':sendak.freenode.net 352 testbot #ircanywhere ~node 84.12.104.27 sendak.freenode.net testbot H :0 node',
+			':sendak.freenode.net 352 testbot #ircanywhere ~notifico 198.199.82.216 hubbard.freenode.net Not-002 H :0 Notifico! - http://n.tkte.ch/',
+			':sendak.freenode.net 352 testbot #ircanywhere ~ricki unaffiliated/rickibalboa leguin.freenode.net rickibalboa H@ :0 Ricki',
+			':sendak.freenode.net 352 testbot #ircanywhere Three host-92-3-234-146.as43234.net card.freenode.net Gnasher H@ :0 Dave',
+			':sendak.freenode.net 352 testbot #ircanywhere venko Colchester-LUG/Legen.dary rothfuss.freenode.net Venko H :0 venko',
+			':sendak.freenode.net 352 testbot #ircanywhere ~D3M0N irc.legalizeourmarijuana.us leguin.freenode.net [D3M0N] H :0 The Almighty D3V1L!',
+			':sendak.freenode.net 352 testbot #ircanywhere ~lyska op.op.op.oppan.ganghamstyle.pw hobana.freenode.net lyska H :0 Sam Dodrill <niichan@ponychat.net>',
+			':sendak.freenode.net 352 testbot #ircanywhere ChanServ services. services. ChanServ H@ :0 Channel Services',
+			':sendak.freenode.net 352 testbot #ircanywhere ~LoganLK 162.243.133.98 rothfuss.freenode.net LoganLK H :0 Logan',
+			':sendak.freenode.net 352 testbot #ircanywhere sid15915 gateway/web/irccloud.com/x-uvcbvvujowjeeaga leguin.freenode.net JakeXKS G :0 Jake',
+			':sendak.freenode.net 352 testbot #ircanywhere sid11863 gateway/web/irccloud.com/x-qaysfvklhrsppher leguin.freenode.net Techman G :0 Michael Hazell',
+			':sendak.freenode.net 352 testbot #ircanywhere ~TkTech irc.tkte.ch kornbluth.freenode.net TkTech H :0 TkTech',
+			':sendak.freenode.net 352 testbot #ircanywhere ~Trinexx tecnode-gaming.com wolfe.freenode.net zz_Trinexx H :0 Jake',
+			':sendak.freenode.net 352 testbot #ircanywhere ~Tappy 2605:6400:2:fed5:22:fd8f:98fd:7a74 morgan.freenode.net Tappy H :0 Tappy',
+			':sendak.freenode.net 315 testbot #ircanywhere :End of /WHO list.'
+		];
+		var socket = new Client('key', network, MockGenericSocket);
+	};
+
+	it('who event should have correct object format', function (done) {
+		setup();
+		Events.once('key.who', function(o) {
+			o.should.have.property('channel');
+			o.should.have.property('who');
+			done();
+		});
+	});
+
+	it('channel should be correct', function (done) {
+		setup();
+		Events.once('key.who', function(o) {
+			o.channel.should.equal('#ircanywhere');
+			done();
+		});
+	});
+
+	it('who array should be correct', function (done) {
+		setup();
+		Events.once('key.who', function(o) {
+			o.who.should.have.a.lengthOf(14);
+			o.who[0].chan.should.equal('#ircanywhere');
+			o.who[0].prefix.should.equal('~node@84.12.104.27');
+			o.who[0].nick.should.equal('testbot');
+			o.who[0].mode.should.equal('H');
+			o.who[0].extra.should.equal('0 node');
+			done();
+		});
+	});
+});
+
+describe('whois event', function () {
+	function setup() {
+		MockGenericSocket.messages = [
+			':sendak.freenode.net 311 testbot rickibalboa ~ricki unaffiliated/rickibalboa * :Ricki',
+			':sendak.freenode.net 319 testbot rickibalboa :@#ircanywhere',
+			':sendak.freenode.net 312 testbot rickibalboa leguin.freenode.net :Ume?, SE, EU',
+			':sendak.freenode.net 671 testbot rickibalboa :is using a secure connection',
+			':sendak.freenode.net 330 testbot rickibalboa rickibalboa :is logged in as',
+			':sendak.freenode.net 318 testbot rickibalboa :End of /WHOIS list.'
+		];
+		var socket = new Client('key', network, MockGenericSocket);
+	};
+
+	it('whois event should have correct object format', function (done) {
+		setup();
+		Events.once('key.whois', function(o) {
+			o.should.have.property('nick');
+			o.should.have.property('user');
+			o.should.have.property('host');
+			o.should.have.property('realname');
+			o.should.have.property('channels');
+			o.should.have.property('server');
+			o.should.have.property('serverinfo');
+			o.should.have.property('secure');
+			done();
+		});
+	});
+
+	it('whois object should be correct', function (done) {
+		setup();
+		Events.once('key.whois', function(o) {
+			o.nick.should.equal('rickibalboa');
+			o.user.should.equal('~ricki');
+			o.host.should.equal('unaffiliated/rickibalboa');
+			o.realname.should.equal('Ricki');
+			o.channels.should.eql(['@#ircanywhere']);
+			o.server.should.equal('leguin.freenode.net');
+			o.serverinfo.should.equal('Ume?, SE, EU');
+			o.secure.should.equal('is using a secure connection');
 			done();
 		});
 	});
