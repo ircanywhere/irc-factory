@@ -548,6 +548,54 @@ describe('invite event', function () {
 	});
 });
 
+describe('away/unaway event as per away-notify', function () {
+	function setup() {
+		MockGenericSocket.messages = [
+			':rickibalboa!~ricki@unaffiliated/rickibalboa AWAY :im going away',
+			':rickibalboa!~ricki@unaffiliated/rickibalboa AWAY :'
+		];
+		var socket = new Client('key', network, MockGenericSocket);
+	};
+
+	it('away object should have correct format', function (done) {
+		setup();
+		Events.once('key.away', function(o) {
+			o.should.have.properties('nickname', 'username', 'hostname', 'message');
+			done();
+		});
+	});
+
+	it('unaway object should have correct format', function (done) {
+		setup();
+		Events.once('key.unaway', function(o) {
+			o.should.have.properties('nickname', 'username', 'hostname');
+			o.should.not.have.property('message');
+			done();
+		});
+	});
+
+	it('away values should be correct', function (done) {
+		setup();
+		Events.once('key.away', function(o) {
+			o.nickname.should.equal('rickibalboa');
+			o.username.should.equal('~ricki');
+			o.hostname.should.equal('unaffiliated/rickibalboa');
+			o.message.should.equal('im going away');
+			done();
+		});
+	});
+
+	it('unaway values should be correct', function (done) {
+		setup();
+		Events.once('key.unaway', function(o) {
+			o.nickname.should.equal('rickibalboa');
+			o.username.should.equal('~ricki');
+			o.hostname.should.equal('unaffiliated/rickibalboa');
+			done();
+		});
+	});
+});
+
 describe('privmsg event', function () {
 	function setup() {
 		MockGenericSocket.messages = [
