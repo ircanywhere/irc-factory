@@ -522,6 +522,34 @@ describe('notice event', function () {
 	});
 });
 
+describe('action event', function () {
+	function setup() {
+		MockGenericSocket.messages = [
+			':rickibalboa!~ricki@unaffiliated/rickibalboa PRIVMSG #ircanywhere-test :+ACTION hey just an action test here'
+		];
+		var socket = new Client('key', network, MockGenericSocket);
+	};
+
+	it('action object should have correct format', function (done) {
+		setup();
+		Events.once('key.action', function(o) {
+			o.should.have.properties('nickname', 'username', 'hostname', 'target', 'message');
+			done();
+		});
+	});
+
+	it('values should be correct', function (done) {
+		setup();
+		Events.once('key.action', function(o) {
+			o.nickname.should.equal('rickibalboa');
+			o.hostname.should.equal('unaffiliated/rickibalboa');
+			o.target.should.equal('#ircanywhere-test');
+			o.message.should.equal('hey just an action test here');
+			done();
+		});
+	});
+});
+
 describe('links event', function () {
 	function setup() {
 		MockGenericSocket.messages = [
