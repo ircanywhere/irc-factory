@@ -196,7 +196,7 @@ describe('names event', function () {
 describe('who event', function () {
 	function setup() {
 		MockGenericSocket.messages = [
-			':sendak.freenode.net 352 testbot #ircanywhere ~node 84.12.104.27 sendak.freenode.net testbot H :0 node',
+			':sendak.freenode.net 352 testbot #ircanywhere ~testuser unaffiliated/testbot sendak.freenode.net testbot H :0 realuser',
 			':sendak.freenode.net 352 testbot #ircanywhere ~notifico 198.199.82.216 hubbard.freenode.net Not-002 H :0 Notifico! - http://n.tkte.ch/',
 			':sendak.freenode.net 352 testbot #ircanywhere ~ricki unaffiliated/rickibalboa leguin.freenode.net rickibalboa H@ :0 Ricki',
 			':sendak.freenode.net 352 testbot #ircanywhere Three host-92-3-234-146.as43234.net card.freenode.net Gnasher H@ :0 Dave',
@@ -236,10 +236,10 @@ describe('who event', function () {
 		Events.once('key.who', function(o) {
 			o.who.should.have.a.lengthOf(14);
 			o.who[0].channel.should.equal('#ircanywhere');
-			o.who[0].prefix.should.equal('~node@84.12.104.27');
+			o.who[0].prefix.should.equal('~testuser@unaffiliated/testbot');
 			o.who[0].nickname.should.equal('testbot');
 			o.who[0].mode.should.equal('H');
-			o.who[0].extra.should.equal('0 node');
+			o.who[0].extra.should.equal('0 realuser');
 			done();
 		});
 	});
@@ -277,274 +277,6 @@ describe('whois event', function () {
 			o.server.should.equal('leguin.freenode.net');
 			o.serverinfo.should.equal('Ume?, SE, EU');
 			o.secure.should.equal('is using a secure connection');
-			done();
-		});
-	});
-});
-
-describe('user mode event', function () {
-	function setup() {
-		MockGenericSocket.messages = [
-			':testbot MODE testbot :+i'
-		];
-		var socket = new Client('key', network, MockGenericSocket);
-	};
-
-	it('mode object should have correct format', function (done) {
-		setup();
-		Events.once('key.usermode', function(o) {
-			o.should.have.properties('nickname', 'mode');
-			done();
-		});
-	});
-
-	it('nick and mode should be correct', function (done) {
-		setup();
-		Events.once('key.usermode', function(o) {
-			o.nickname.should.equal('testbot');
-			o.mode.should.equal('+i');
-			done();
-		});
-	});
-});
-
-describe('mode event', function () {
-	function setup() {
-		MockGenericSocket.messages = [
-			':rickibalboa!~ricki@unaffiliated/rickibalboa MODE #ircanywhere-test +i'
-		];
-		var socket = new Client('key', network, MockGenericSocket);
-	};
-
-	it('mode object should have correct format', function (done) {
-		setup();
-		Events.once('key.mode', function(o) {
-			o.should.have.properties('nickname', 'username', 'hostname', 'channel', 'mode');
-			done();
-		});
-	});
-
-	it('channel and mode should be correct', function (done) {
-		setup();
-		Events.once('key.mode', function(o) {
-			o.channel.should.equal('#ircanywhere-test');
-			o.nickname.should.equal('rickibalboa');
-			o.mode.should.equal('+i');
-			done();
-		});
-	});
-});
-
-describe('join event', function () {
-	function setup() {
-		MockGenericSocket.messages = [
-			':rickibalboa!~ricki@unaffiliated/rickibalboa JOIN #ircanywhere-test'
-		];
-		var socket = new Client('key', network, MockGenericSocket);
-	};
-
-	it('join object should have correct format', function (done) {
-		setup();
-		Events.once('key.join', function(o) {
-			o.should.have.properties('channel', 'username', 'hostname', 'nickname');
-			done();
-		});
-	});
-});
-
-describe('part event', function () {
-	function setup() {
-		MockGenericSocket.messages = [
-			':rickibalboa!~ricki@unaffiliated/rickibalboa PART #ircanywhere-test :with a message'
-		];
-		var socket = new Client('key', network, MockGenericSocket);
-	};
-
-	it('part object should have correct format', function (done) {
-		setup();
-		Events.once('key.part', function(o) {
-			o.should.have.properties('channel', 'username', 'hostname', 'nickname', 'message');
-			done();
-		});
-	});
-
-	it('channel and nick should be correct', function (done) {
-		setup();
-		Events.once('key.part', function(o) {
-			o.channel.should.equal('#ircanywhere-test');
-			o.nickname.should.equal('rickibalboa');
-			done();
-		});
-	});
-
-	it('message should be correct', function (done) {
-		setup();
-		Events.once('key.part', function(o) {
-			o.message.should.equal('with a message');
-			done();
-		});
-	});
-});
-
-describe('kick event', function () {
-	function setup() {
-		MockGenericSocket.messages = [
-			':rickibalboa!~ricki@unaffiliated/rickibalboa KICK #ircanywhere-test testbot :bye mate'
-		];
-		var socket = new Client('key', network, MockGenericSocket);
-	};
-
-	it('kick object should have correct format', function (done) {
-		setup();
-		Events.once('key.kick', function(o) {
-			o.should.have.properties('channel', 'username', 'hostname', 'nickname', 'kicked', 'message');
-			done();
-		});
-	});
-
-	it('values should be correct', function (done) {
-		setup();
-		Events.once('key.kick', function(o) {
-			o.nickname.should.equal('rickibalboa');
-			o.channel.should.equal('#ircanywhere-test');
-			o.kicked.should.equal('testbot');
-			o.message.should.equal('bye mate');
-			done();
-		});
-	});
-});
-
-describe('quit event', function () {
-	function setup() {
-		MockGenericSocket.messages = [
-			':rickibalboa!~ricki@unaffiliated/rickibalboa QUIT :Ping timeout: 240 seconds'
-		];
-		var socket = new Client('key', network, MockGenericSocket);
-	};
-
-	it('quit object should have correct format', function (done) {
-		setup();
-		Events.once('key.quit', function(o) {
-			o.should.have.properties('nickname', 'username', 'hostname', 'message');
-			done();
-		});
-	});
-
-	it('values should be correct', function (done) {
-		setup();
-		Events.once('key.quit', function(o) {
-			o.nickname.should.equal('rickibalboa');
-			o.message.should.equal('Ping timeout: 240 seconds');
-			done();
-		});
-	});
-});
-
-describe('invite event', function () {
-	function setup() {
-		MockGenericSocket.messages = [
-			':rickibalboa!~ricki@unaffiliated/rickibalboa INVITE testbot :#ircanywhere-test'
-		];
-		var socket = new Client('key', network, MockGenericSocket);
-	};
-
-	it('invite object should have correct format', function (done) {
-		setup();
-		Events.once('key.invite', function(o) {
-			o.should.have.properties('nickname', 'username', 'hostname', 'channel');
-			done();
-		});
-	});
-
-	it('values should be correct', function (done) {
-		setup();
-		Events.once('key.invite', function(o) {
-			o.nickname.should.equal('rickibalboa');
-			o.channel.should.equal('#ircanywhere-test');
-			done();
-		});
-	});
-});
-
-describe('privmsg event', function () {
-	function setup() {
-		MockGenericSocket.messages = [
-			':rickibalboa!~ricki@unaffiliated/rickibalboa PRIVMSG #ircanywhere-test :hey there, this is a privmsg'
-		];
-		var socket = new Client('key', network, MockGenericSocket);
-	};
-
-	it('privmsg object should have correct format', function (done) {
-		setup();
-		Events.once('key.privmsg', function(o) {
-			o.should.have.properties('nickname', 'username', 'hostname', 'target', 'message');
-			done();
-		});
-	});
-
-	it('values should be correct', function (done) {
-		setup();
-		Events.once('key.privmsg', function(o) {
-			o.nickname.should.equal('rickibalboa');
-			o.hostname.should.equal('unaffiliated/rickibalboa');
-			o.target.should.equal('#ircanywhere-test');
-			o.message.should.equal('hey there, this is a privmsg');
-			done();
-		});
-	});
-});
-
-describe('notice event', function () {
-	function setup() {
-		MockGenericSocket.messages = [
-			':rickibalboa!~ricki@unaffiliated/rickibalboa NOTICE testbot :hi, just sending you a notice'
-		];
-		var socket = new Client('key', network, MockGenericSocket);
-	};
-
-	it('notice object should have correct format', function (done) {
-		setup();
-		Events.once('key.notice', function(o) {
-			o.should.have.properties('nickname', 'username', 'hostname', 'target', 'message');
-			done();
-		});
-	});
-
-	it('values should be correct', function (done) {
-		setup();
-		Events.once('key.notice', function(o) {
-			o.nickname.should.equal('rickibalboa');
-			o.hostname.should.equal('unaffiliated/rickibalboa');
-			o.target.should.equal('testbot');
-			o.message.should.equal('hi, just sending you a notice');
-			done();
-		});
-	});
-});
-
-describe('action event', function () {
-	function setup() {
-		MockGenericSocket.messages = [
-			':rickibalboa!~ricki@unaffiliated/rickibalboa PRIVMSG #ircanywhere-test :+ACTION hey just an action test here'
-		];
-		var socket = new Client('key', network, MockGenericSocket);
-	};
-
-	it('action object should have correct format', function (done) {
-		setup();
-		Events.once('key.action', function(o) {
-			o.should.have.properties('nickname', 'username', 'hostname', 'target', 'message');
-			done();
-		});
-	});
-
-	it('values should be correct', function (done) {
-		setup();
-		Events.once('key.action', function(o) {
-			o.nickname.should.equal('rickibalboa');
-			o.hostname.should.equal('unaffiliated/rickibalboa');
-			o.target.should.equal('#ircanywhere-test');
-			o.message.should.equal('hey just an action test here');
 			done();
 		});
 	});
@@ -606,6 +338,357 @@ describe('list event', function () {
 			o.list[0].channel.should.equal('#puppet');
 			o.list[0].users.should.equal('1058');
 			o.list[0].topic.should.equal('Puppet Enterprise 3.1.0: http://bit.ly/PE_31 | Puppet 3.3.2: http://bit.ly/QUjTW0 |  Help: http://{ask,docs}.puppetlabs.com | Bugs & Feature Requests: http://bit.ly/aoNNEP');
+			done();
+		});
+	});
+});
+
+describe('user mode event', function () {
+	function setup() {
+		MockGenericSocket.messages = [
+			':testbot MODE testbot :+i'
+		];
+		var socket = new Client('key', network, MockGenericSocket);
+	};
+
+	it('mode object should have correct format', function (done) {
+		setup();
+		Events.once('key.usermode', function(o) {
+			o.should.have.properties('nickname', 'mode');
+			done();
+		});
+	});
+
+	it('nick and mode should be correct', function (done) {
+		setup();
+		Events.once('key.usermode', function(o) {
+			o.nickname.should.equal('testbot');
+			o.mode.should.equal('+i');
+			done();
+		});
+	});
+});
+
+describe('mode event', function () {
+	function setup() {
+		MockGenericSocket.messages = [
+			':rickibalboa!~ricki@unaffiliated/rickibalboa MODE #ircanywhere-test +i'
+		];
+		var socket = new Client('key', network, MockGenericSocket);
+	};
+
+	it('mode object should have correct format', function (done) {
+		setup();
+		Events.once('key.mode', function(o) {
+			o.should.have.properties('nickname', 'username', 'hostname', 'channel', 'mode');
+			done();
+		});
+	});
+
+	it('channel and mode should be correct', function (done) {
+		setup();
+		Events.once('key.mode', function(o) {
+			o.channel.should.equal('#ircanywhere-test');
+			o.nickname.should.equal('rickibalboa');
+			o.username.should.equal('~ricki');
+			o.hostname.should.equal('unaffiliated/rickibalboa');
+			o.mode.should.equal('+i');
+			done();
+		});
+	});
+});
+
+describe('join event', function () {
+	function setup() {
+		MockGenericSocket.messages = [
+			':rickibalboa!~ricki@unaffiliated/rickibalboa JOIN #ircanywhere-test'
+		];
+		var socket = new Client('key', network, MockGenericSocket);
+	};
+
+	it('join object should have correct format', function (done) {
+		setup();
+		Events.once('key.join', function(o) {
+			o.should.have.properties('channel', 'username', 'hostname', 'nickname');
+			done();
+		});
+	});
+
+	it('values should be correct', function (done) {
+		setup();
+		Events.once('key.join', function(o) {
+			o.channel.should.equal('#ircanywhere-test');
+			o.nickname.should.equal('rickibalboa');
+			o.username.should.equal('~ricki');
+			o.hostname.should.equal('unaffiliated/rickibalboa');
+			done();
+		});
+	});
+});
+
+describe('part event', function () {
+	function setup() {
+		MockGenericSocket.messages = [
+			':rickibalboa!~ricki@unaffiliated/rickibalboa PART #ircanywhere-test :with a message'
+		];
+		var socket = new Client('key', network, MockGenericSocket);
+	};
+
+	it('part object should have correct format', function (done) {
+		setup();
+		Events.once('key.part', function(o) {
+			o.should.have.properties('channel', 'username', 'hostname', 'nickname', 'message');
+			done();
+		});
+	});
+
+	it('channel and nick should be correct', function (done) {
+		setup();
+		Events.once('key.part', function(o) {
+			o.channel.should.equal('#ircanywhere-test');
+			o.nickname.should.equal('rickibalboa');
+			o.username.should.equal('~ricki');
+			o.hostname.should.equal('unaffiliated/rickibalboa');
+			done();
+		});
+	});
+
+	it('message should be correct', function (done) {
+		setup();
+		Events.once('key.part', function(o) {
+			o.message.should.equal('with a message');
+			done();
+		});
+	});
+});
+
+describe('kick event', function () {
+	function setup() {
+		MockGenericSocket.messages = [
+			':rickibalboa!~ricki@unaffiliated/rickibalboa KICK #ircanywhere-test testbot :bye mate'
+		];
+		var socket = new Client('key', network, MockGenericSocket);
+	};
+
+	it('kick object should have correct format', function (done) {
+		setup();
+		Events.once('key.kick', function(o) {
+			o.should.have.properties('channel', 'username', 'hostname', 'nickname', 'kicked', 'message');
+			done();
+		});
+	});
+
+	it('values should be correct', function (done) {
+		setup();
+		Events.once('key.kick', function(o) {
+			o.nickname.should.equal('rickibalboa');
+			o.username.should.equal('~ricki');
+			o.hostname.should.equal('unaffiliated/rickibalboa');
+			o.channel.should.equal('#ircanywhere-test');
+			o.kicked.should.equal('testbot');
+			o.message.should.equal('bye mate');
+			done();
+		});
+	});
+});
+
+describe('quit event', function () {
+	function setup() {
+		MockGenericSocket.messages = [
+			':rickibalboa!~ricki@unaffiliated/rickibalboa QUIT :Ping timeout: 240 seconds'
+		];
+		var socket = new Client('key', network, MockGenericSocket);
+	};
+
+	it('quit object should have correct format', function (done) {
+		setup();
+		Events.once('key.quit', function(o) {
+			o.should.have.properties('nickname', 'username', 'hostname', 'message');
+			done();
+		});
+	});
+
+	it('values should be correct', function (done) {
+		setup();
+		Events.once('key.quit', function(o) {
+			o.nickname.should.equal('rickibalboa');
+			o.username.should.equal('~ricki');
+			o.hostname.should.equal('unaffiliated/rickibalboa');
+			o.message.should.equal('Ping timeout: 240 seconds');
+			done();
+		});
+	});
+});
+
+describe('invite event', function () {
+	function setup() {
+		MockGenericSocket.messages = [
+			':rickibalboa!~ricki@unaffiliated/rickibalboa INVITE testbot :#ircanywhere-test'
+		];
+		var socket = new Client('key', network, MockGenericSocket);
+	};
+
+	it('invite object should have correct format', function (done) {
+		setup();
+		Events.once('key.invite', function(o) {
+			o.should.have.properties('nickname', 'username', 'hostname', 'channel');
+			done();
+		});
+	});
+
+	it('values should be correct', function (done) {
+		setup();
+		Events.once('key.invite', function(o) {
+			o.nickname.should.equal('rickibalboa');
+			o.username.should.equal('~ricki');
+			o.hostname.should.equal('unaffiliated/rickibalboa');
+			o.channel.should.equal('#ircanywhere-test');
+			done();
+		});
+	});
+});
+
+describe('privmsg event', function () {
+	function setup() {
+		MockGenericSocket.messages = [
+			':rickibalboa!~ricki@unaffiliated/rickibalboa PRIVMSG #ircanywhere-test :hey there, this is a privmsg'
+		];
+		var socket = new Client('key', network, MockGenericSocket);
+	};
+
+	it('privmsg object should have correct format', function (done) {
+		setup();
+		Events.once('key.privmsg', function(o) {
+			o.should.have.properties('nickname', 'username', 'hostname', 'target', 'message');
+			done();
+		});
+	});
+
+	it('values should be correct', function (done) {
+		setup();
+		Events.once('key.privmsg', function(o) {
+			o.nickname.should.equal('rickibalboa');
+			o.username.should.equal('~ricki');
+			o.hostname.should.equal('unaffiliated/rickibalboa');
+			o.target.should.equal('#ircanywhere-test');
+			o.message.should.equal('hey there, this is a privmsg');
+			done();
+		});
+	});
+});
+
+describe('notice event', function () {
+	function setup() {
+		MockGenericSocket.messages = [
+			':rickibalboa!~ricki@unaffiliated/rickibalboa NOTICE testbot :hi, just sending you a notice'
+		];
+		var socket = new Client('key', network, MockGenericSocket);
+	};
+
+	it('notice object should have correct format', function (done) {
+		setup();
+		Events.once('key.notice', function(o) {
+			o.should.have.properties('nickname', 'username', 'hostname', 'target', 'message');
+			done();
+		});
+	});
+
+	it('values should be correct', function (done) {
+		setup();
+		Events.once('key.notice', function(o) {
+			o.nickname.should.equal('rickibalboa');
+			o.username.should.equal('~ricki');
+			o.hostname.should.equal('unaffiliated/rickibalboa');
+			o.target.should.equal('testbot');
+			o.message.should.equal('hi, just sending you a notice');
+			done();
+		});
+	});
+});
+
+describe('action event', function () {
+	function setup() {
+		MockGenericSocket.messages = [
+			':rickibalboa!~ricki@unaffiliated/rickibalboa PRIVMSG #ircanywhere-test :+ACTION hey just an action test here'
+		];
+		var socket = new Client('key', network, MockGenericSocket);
+	};
+
+	it('action object should have correct format', function (done) {
+		setup();
+		Events.once('key.action', function(o) {
+			o.should.have.properties('nickname', 'username', 'hostname', 'target', 'message');
+			done();
+		});
+	});
+
+	it('values should be correct', function (done) {
+		setup();
+		Events.once('key.action', function(o) {
+			o.nickname.should.equal('rickibalboa');
+			o.username.should.equal('~ricki');
+			o.hostname.should.equal('unaffiliated/rickibalboa');
+			o.target.should.equal('#ircanywhere-test');
+			o.message.should.equal('hey just an action test here');
+			done();
+		});
+	});
+});
+
+describe('ctcp request event', function () {
+	function setup() {
+		MockGenericSocket.messages = [
+			':rickibalboa!~ricki@unaffiliated/rickibalboa PRIVMSG testbot :+VERSION'
+		];
+		var socket = new Client('key', network, MockGenericSocket);
+	};
+
+	it('ctcp request object should have correct format', function (done) {
+		setup();
+		Events.once('key.ctcp_request', function(o) {
+			o.should.have.properties('nickname', 'username', 'hostname', 'type', 'target');
+			done();
+		});
+	});
+
+	it('values should be correct', function (done) {
+		setup();
+		Events.once('key.ctcp_request', function(o) {
+			o.nickname.should.equal('rickibalboa');
+			o.username.should.equal('~ricki');
+			o.hostname.should.equal('unaffiliated/rickibalboa');
+			o.type.should.equal('VERSION');
+			o.target.should.equal('testbot');
+			done();
+		});
+	});
+});
+
+describe('ctcp response event', function () {
+	function setup() {
+		MockGenericSocket.messages = [
+			':rickibalboa!~ricki@unaffiliated/rickibalboa NOTICE testbot :VERSION HexChat 2.9.5 [x64] / Windows 8 [3.43GHz]'
+		];
+		var socket = new Client('key', network, MockGenericSocket);
+	};
+
+	it('ctcp response object should have correct format', function (done) {
+		setup();
+		Events.once('key.ctcp_response', function(o) {
+			o.should.have.properties('nickname', 'username', 'hostname', 'type', 'target', 'message');
+			done();
+		});
+	});
+
+	it('values should be correct', function (done) {
+		setup();
+		Events.once('key.ctcp_response', function(o) {
+			o.nickname.should.equal('rickibalboa');
+			o.username.should.equal('~ricki');
+			o.hostname.should.equal('unaffiliated/rickibalboa');
+			o.type.should.equal('VERSION');
+			o.target.should.equal('testbot');
+			o.message.should.equal('HexChat 2.9.5 [x64] / Windows 8 [3.43GHz]');
 			done();
 		});
 	});
