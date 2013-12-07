@@ -12,12 +12,13 @@
 	"devDependencies": {
     	"mocha": "1.15.1",
     	"should": "2.1.0",
-    	"sinon": "1.7.3"
+    	"sinon": "1.7.3",
+    	"lodash": "*"
     },
 	"dependencies": {
 		"eventemitter2": "0.4.13",
 		"irc-message": "0.2.0",
-		"simple-irc-socket": "https://github.com/rickihastings/simple-irc-socket/tarball/master"
+		"simple-irc-socket": "1.2.1"
 	},
 	"repository": {
 		"type": "git",
