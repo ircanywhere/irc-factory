@@ -1,3 +1,3 @@
 test: 
-	mocha --reporter nyan --recursive
+	mocha --reporter spec --recursive
 .PHONY: test
