@@ -50,3 +50,28 @@ describe('api.createClient() tests', function () {
 		});
 	});
 });
+
+describe('api.destroyClient() tests', function() {
+	var client;
+
+	before(function() {
+		client = api.createClient('key', {
+		    nick : 'testbot',
+		    user : 'testuser',
+		    server : 'irc.freenode.net',
+		    realname: 'realbot',
+		    port: 6667,
+		    secure: false
+		}, true);
+	});
+
+	it('client should have been removed', function(done) {
+		(api.destroyClient('key')).should.equal(true);
+		done();
+	});
+
+	it('client should be inaccessible', function(done) {
+		(api.destroyClient('key')).should.equal(false);
+		done();
+	});
+});
