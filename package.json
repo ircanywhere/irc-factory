@@ -1,42 +1,42 @@
 {
-	"name": "irc-factory",
-	"description": "A library for creating multiple IRC clients and managing them based on simple-irc-socket and irc-message",
-	"version": "0.3.0",
-	"author": "Ricki Hastings <ricki@ircanywhere.com>",
-	"contributors": [
-		{
-			"name": "Ricki Hastings",
-			"email": "ricki@ircanywhere.com"
-		}
-	],
-	"devDependencies": {
-    	"mocha": "1.15.1",
-    	"should": "2.1.0",
-    	"sinon": "1.7.3",
-    	"lodash": "*"
-    },
-	"dependencies": {
-		"eventemitter2": "0.4.13",
-		"irc-message": "0.2.0",
-		"simple-irc-socket": "1.2.1",
-		"dnode": "1.1.0"
-	},
-	"repository": {
-		"type": "git",
-		"url": "http://github.com/ircanywhere/irc-factory"
-	},
-	"bugs": {
-		"mail": "support@ircanywhere.com",
-		"url": "http://github.com/ircanywhere/irc-factory/issues"
-	},
-	"scripts": {
-		"test": "make test"
-  	},
-	"main": "lib/api",
-	"licenses": [
-		{
-			"type": "MIT",
-			"url": "http://github.com/ircanywhere/irc-factory/raw/master/LICENSE"
-		}
-	]
+  "name": "irc-factory",
+  "description": "A library for creating multiple IRC clients and managing them based on simple-irc-socket and irc-message",
+  "version": "0.6.5",
+  "author": "Ricki Hastings <ricki@ircanywhere.com>",
+  "contributors": [
+    {
+      "name": "Ricki Hastings",
+      "email": "ricki@ircanywhere.com"
+    }
+  ],
+  "devDependencies": {
+    "mocha": "1.15.1",
+    "should": "2.1.0",
+    "sinon": "1.7.3",
+    "lodash": "*"
+  },
+  "dependencies": {
+    "eventemitter2": "0.4.13",
+    "irc-message": "0.2.0",
+    "simple-irc-socket": "1.2.1",
+    "dnode": "1.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/ircanywhere/irc-factory"
+  },
+  "bugs": {
+    "mail": "support@ircanywhere.com",
+    "url": "http://github.com/ircanywhere/irc-factory/issues"
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "main": "lib/api",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://github.com/ircanywhere/irc-factory/raw/master/LICENSE"
+    }
+  ]
 }
