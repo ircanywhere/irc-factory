@@ -32,7 +32,7 @@
 	"scripts": {
 		"test": "make test"
   	},
-	"main": "lib/main",
+	"main": "lib/api",
 	"licenses": [
 		{
 			"type": "MIT",
