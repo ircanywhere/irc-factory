@@ -13,18 +13,20 @@ var network = Object.freeze({
     secure: false
 });
 
+var socket = new Client('key', network, readWriteStream);
+
 describe('registered event', function () {
-	function setup() {
-		var socket = new Client('key', network, readWriteStream);
-		socket.connection.impl.write(":sendak.freenode.net 001 testbot :Welcome to the Test IRC Network testbot!testuser@localhost\r\n", 'utf-8');
-	};
+	beforeEach(function() {
+		setTimeout(function() {
+			socket.connection.impl.write(":sendak.freenode.net 001 testbot :Welcome to the Test IRC Network testbot!testuser@localhost\r\n", 'utf-8');
+		}, 0);
+	});
 
 	it('registered event should have nickname property', function (done) {
 		Events.once('key.registered', function(o) {
 			o.should.have.property('nickname');
 			done();
 		});
-		setup();
 	});
 
 	it('registered event nickname property should equal testbot', function (done) {
@@ -32,18 +34,18 @@ describe('registered event', function () {
 			o.nickname.should.equal('testbot');
 			done();
 		});
-		setup();
 	});
 });
 
 describe('capabilities event', function () {
-	function setup() {
-		var socket = new Client('key', network, readWriteStream);
-		socket.connection.impl.write(":sendak.freenode.net 004 testbot moorcock.freenode.net ircd-seven-1.1.3 DOQRSZaghilopswz CFILMPQSbcefgijklmnopqrstvz bkloveqjfI\r\n", 'utf-8');
-		socket.connection.impl.write(":sendak.freenode.net 005 testbot CHANTYPES=# EXCEPTS INVEX CHANMODES=eIbq,k,flj,CFLMPQScgimnprstz CHANLIMIT=#:120 PREFIX=(ov)@+ MAXLIST=bqeI:100 MODES=4 NETWORK=freenode KNOCKSTATUSMSG=@+ CALLERID=g :are supported by this server\r\n", 'utf-8');
-		socket.connection.impl.write(":sendak.freenode.net 005 testbot CASEMAPPING=rfc1459 CHARSET=ascii NICKLEN=16 CHANNELLEN=50 TOPICLEN=390 ETRACE CPRIVMSG CNOTICE DEAF=D MONITOR=100 FNC TARGMAX=NAMES:1,LIST:1,KICK:1,WHOIS:1,PRIVMSG:4,NOTICE:4,ACCEPT:,MONITOR: :are supported by this server\r\n", 'utf-8');
-		socket.connection.impl.write(":sendak.freenode.net 005 testbot EXTBAN=$,arxz WHOX CLIENTVER=3.0 SAFELIST ELIST=CTU :are supported by this server\r\n", 'utf-8');
-	};
+	beforeEach(function() {
+		setTimeout(function() {
+			socket.connection.impl.write(":sendak.freenode.net 004 testbot moorcock.freenode.net ircd-seven-1.1.3 DOQRSZaghilopswz CFILMPQSbcefgijklmnopqrstvz bkloveqjfI\r\n", 'utf-8');
+			socket.connection.impl.write(":sendak.freenode.net 005 testbot CHANTYPES=# EXCEPTS INVEX CHANMODES=eIbq,k,flj,CFLMPQScgimnprstz CHANLIMIT=#:120 PREFIX=(ov)@+ MAXLIST=bqeI:100 MODES=4 NETWORK=freenode KNOCKSTATUSMSG=@+ CALLERID=g :are supported by this server\r\n", 'utf-8');
+			socket.connection.impl.write(":sendak.freenode.net 005 testbot CASEMAPPING=rfc1459 CHARSET=ascii NICKLEN=16 CHANNELLEN=50 TOPICLEN=390 ETRACE CPRIVMSG CNOTICE DEAF=D MONITOR=100 FNC TARGMAX=NAMES:1,LIST:1,KICK:1,WHOIS:1,PRIVMSG:4,NOTICE:4,ACCEPT:,MONITOR: :are supported by this server\r\n", 'utf-8');
+			socket.connection.impl.write(":sendak.freenode.net 005 testbot EXTBAN=$,arxz WHOX CLIENTVER=3.0 SAFELIST ELIST=CTU :are supported by this server\r\n", 'utf-8');
+		}, 0);
+	});
 
 	it('capabilities event should have correct object format', function (done) {
 		Events.once('key.capabilities', function(o) {
@@ -52,7 +54,6 @@ describe('capabilities event', function () {
 			o.should.have.properties('kicklength', 'maxlist', 'maxtargets', 'modes', 'modeForPrefix', 'prefixForMode', 'nicklength', 'topiclength', 'usermodes', 'name');
 			done();
 		});
-		setup();
 	});
 
 	it('capabilities event should have correct channel object', function (done) {
@@ -68,7 +69,6 @@ describe('capabilities event', function () {
 			o.channel.types.should.equal('#');
 			done();
 		});
-		setup();
 	});
 
 	it('capabilities event should have correct values', function (done) {
@@ -86,19 +86,18 @@ describe('capabilities event', function () {
 			o.name.should.equal('freenode');
 			done();
 		});
-		setup();
 	});
 });
 
 describe('motd event', function () {
-	function setup() {
-		var socket = new Client('key', network, readWriteStream);
-		socket.connection.impl.write(":sendak.freenode.net 375 testbot :- sendak.freenode.net Message of the Day -\r\n", 'utf-8');
-		socket.connection.impl.write(":sendak.freenode.net 372 testbot :- Welcome to moorcock.freenode.net in Texas, USA. Thanks to\r\n", 'utf-8');
-		socket.connection.impl.write(":sendak.freenode.net 372 testbot :- Kodingen (http://kodingen.com) for sponsoring this server!\r\n", 'utf-8');
-		socket.connection.impl.write(":sendak.freenode.net 376 testbot :End of /MOTD command.\r\n", 'utf-8');
-
-	};
+	beforeEach(function() {
+		setTimeout(function() {
+			socket.connection.impl.write(":sendak.freenode.net 375 testbot :- sendak.freenode.net Message of the Day -\r\n", 'utf-8');
+			socket.connection.impl.write(":sendak.freenode.net 372 testbot :- Welcome to moorcock.freenode.net in Texas, USA. Thanks to\r\n", 'utf-8');
+			socket.connection.impl.write(":sendak.freenode.net 372 testbot :- Kodingen (http://kodingen.com) for sponsoring this server!\r\n", 'utf-8');
+			socket.connection.impl.write(":sendak.freenode.net 376 testbot :End of /MOTD command.\r\n", 'utf-8');
+		}, 0);
+	});
 
 	it('motd should be correct', function (done) {
 		Events.once('key.motd', function(o) {
@@ -108,23 +107,22 @@ describe('motd event', function () {
 				'End of /MOTD command.']);
 			done();
 		});
-		setup();
 	});
 });
 
 describe('topic event', function () {
-	function setup() {
-		var socket = new Client('key', network, readWriteStream);
-		socket.connection.impl.write(":sendak.freenode.net 332 testbot #ircanywhere :IRCAnywhere, moved to freenode. Development has restarted using meteor.js in 0.2.0 branch https://github.com/ircanywhere/ircanywhere/tree/0.2.0\r\n", 'utf-8');
-		socket.connection.impl.write(":sendak.freenode.net 333 testbot #ircanywhere rickibalboa!~ricki@unaffiliated/rickibalboa 1385050715\r\n", 'utf-8');
-	};
+	beforeEach(function() {
+		setTimeout(function() {
+			socket.connection.impl.write(":sendak.freenode.net 332 testbot #ircanywhere :IRCAnywhere, moved to freenode. Development has restarted using meteor.js in 0.2.0 branch https://github.com/ircanywhere/ircanywhere/tree/0.2.0\r\n", 'utf-8');
+			socket.connection.impl.write(":sendak.freenode.net 333 testbot #ircanywhere rickibalboa!~ricki@unaffiliated/rickibalboa 1385050715\r\n", 'utf-8');
+		}, 0);
+	});
 
 	it('topic event should have correct object format', function (done) {
 		Events.once('key.topic', function(o) {
 			o.should.have.properties('channel', 'topic', 'topicBy');
 			done();
 		});
-		setup();
 	});
 
 	it('channel should be correct', function (done) {
@@ -132,7 +130,6 @@ describe('topic event', function () {
 			o.channel.should.equal('#ircanywhere');
 			done();
 		});
-		setup();
 	});
 
 	it('topic should be correct', function (done) {
@@ -140,7 +137,6 @@ describe('topic event', function () {
 			o.topic.should.have.equal('IRCAnywhere, moved to freenode. Development has restarted using meteor.js in 0.2.0 branch https://github.com/ircanywhere/ircanywhere/tree/0.2.0');
 			done();
 		});
-		setup();
 	});
 
 	it('topic setter should be correct', function (done) {
@@ -148,23 +144,22 @@ describe('topic event', function () {
 			o.topicBy.should.have.equal('rickibalboa!~ricki@unaffiliated/rickibalboa');
 			done();
 		});
-		setup();
 	});
 });
 
 describe('names event', function () {
-	function setup() {
-		var socket = new Client('key', network, readWriteStream);
-		socket.connection.impl.write(":sendak.freenode.net 353 testbot = #ircanywhere :testbot Not-002 @rickibalboa @Gnasher Venko [D3M0N] lyska @ChanServ LoganLK JakeXKS Techman TkTech zz_Trinexx Tappy\r\n", 'utf-8');
-		socket.connection.impl.write(":sendak.freenode.net 366 testbot #ircanywhere :End of /NAMES list.\r\n", 'utf-8');
-	};
+	beforeEach(function() {
+		setTimeout(function() {
+			socket.connection.impl.write(":sendak.freenode.net 353 testbot = #ircanywhere :testbot Not-002 @rickibalboa @Gnasher Venko [D3M0N] lyska @ChanServ LoganLK JakeXKS Techman TkTech zz_Trinexx Tappy\r\n", 'utf-8');
+			socket.connection.impl.write(":sendak.freenode.net 366 testbot #ircanywhere :End of /NAMES list.\r\n", 'utf-8');
+		}, 0);
+	});
 
 	it('names event should have correct object format', function (done) {
 		Events.once('key.names', function(o) {
 			o.should.have.properties('channel', 'names');
 			done();
 		});
-		setup();
 	});
 
 	it('channel should be correct', function (done) {
@@ -172,7 +167,6 @@ describe('names event', function () {
 			o.channel.should.equal('#ircanywhere');
 			done();
 		});
-		setup();
 	});
 
 	it('names array should be correct', function (done) {
@@ -180,36 +174,35 @@ describe('names event', function () {
 			o.names.should.have.eql(['testbot', 'Not-002', '@rickibalboa',  '@Gnasher', 'Venko', '[D3M0N]', 'lyska', '@ChanServ', 'LoganLK', 'JakeXKS',  'Techman', 'TkTech', 'zz_Trinexx', 'Tappy' ]);
 			done();
 		});
-		setup();
 	});
 });
 
 describe('who event', function () {
-	function setup() {
-		var socket = new Client('key', network, readWriteStream);
-		socket.connection.impl.write(":sendak.freenode.net 352 testbot #ircanywhere ~testuser unaffiliated/testbot sendak.freenode.net testbot H :0 realuser\r\n", 'utf-8');
-		socket.connection.impl.write(":sendak.freenode.net 352 testbot #ircanywhere ~notifico 198.199.82.216 hubbard.freenode.net Not-002 H :0 Notifico! - http://n.tkte.ch/\r\n", 'utf-8');
-		socket.connection.impl.write(":sendak.freenode.net 352 testbot #ircanywhere ~ricki unaffiliated/rickibalboa leguin.freenode.net rickibalboa H@ :0 Ricki\r\n", 'utf-8');
-		socket.connection.impl.write(":sendak.freenode.net 352 testbot #ircanywhere Three host-92-3-234-146.as43234.net card.freenode.net Gnasher H@ :0 Dave\r\n", 'utf-8');
-		socket.connection.impl.write(":sendak.freenode.net 352 testbot #ircanywhere venko Colchester-LUG/Legen.dary rothfuss.freenode.net Venko H :0 venko\r\n", 'utf-8');
-		socket.connection.impl.write(":sendak.freenode.net 352 testbot #ircanywhere ~D3M0N irc.legalizeourmarijuana.us leguin.freenode.net [D3M0N] H :0 The Almighty D3V1L!\r\n", 'utf-8');
-		socket.connection.impl.write(":sendak.freenode.net 352 testbot #ircanywhere ~lyska op.op.op.oppan.ganghamstyle.pw hobana.freenode.net lyska H :0 Sam Dodrill <niichan@ponychat.net>\r\n", 'utf-8');
-		socket.connection.impl.write(":sendak.freenode.net 352 testbot #ircanywhere ChanServ services. services. ChanServ H@ :0 Channel Services\r\n", 'utf-8');
-		socket.connection.impl.write(":sendak.freenode.net 352 testbot #ircanywhere ~LoganLK 162.243.133.98 rothfuss.freenode.net LoganLK H :0 Logan\r\n", 'utf-8');
-		socket.connection.impl.write(":sendak.freenode.net 352 testbot #ircanywhere sid15915 gateway/web/irccloud.com/x-uvcbvvujowjeeaga leguin.freenode.net JakeXKS G :0 Jake\r\n", 'utf-8');
-		socket.connection.impl.write(":sendak.freenode.net 352 testbot #ircanywhere sid11863 gateway/web/irccloud.com/x-qaysfvklhrsppher leguin.freenode.net Techman G :0 Michael Hazell\r\n", 'utf-8');
-		socket.connection.impl.write(":sendak.freenode.net 352 testbot #ircanywhere ~TkTech irc.tkte.ch kornbluth.freenode.net TkTech H :0 TkTech\r\n", 'utf-8');
-		socket.connection.impl.write(":sendak.freenode.net 352 testbot #ircanywhere ~Trinexx tecnode-gaming.com wolfe.freenode.net zz_Trinexx H :0 Jake\r\n", 'utf-8');
-		socket.connection.impl.write(":sendak.freenode.net 352 testbot #ircanywhere ~Tappy 2605:6400:2:fed5:22:fd8f:98fd:7a74 morgan.freenode.net Tappy H :0 Tappy\r\n", 'utf-8');
-		socket.connection.impl.write(":sendak.freenode.net 315 testbot #ircanywhere :End of /WHO list.\r\n", 'utf-8');
-	};
+	beforeEach(function() {
+		setTimeout(function() {
+			socket.connection.impl.write(":sendak.freenode.net 352 testbot #ircanywhere ~testuser unaffiliated/testbot sendak.freenode.net testbot H :0 realuser\r\n", 'utf-8');
+			socket.connection.impl.write(":sendak.freenode.net 352 testbot #ircanywhere ~notifico 198.199.82.216 hubbard.freenode.net Not-002 H :0 Notifico! - http://n.tkte.ch/\r\n", 'utf-8');
+			socket.connection.impl.write(":sendak.freenode.net 352 testbot #ircanywhere ~ricki unaffiliated/rickibalboa leguin.freenode.net rickibalboa H@ :0 Ricki\r\n", 'utf-8');
+			socket.connection.impl.write(":sendak.freenode.net 352 testbot #ircanywhere Three host-92-3-234-146.as43234.net card.freenode.net Gnasher H@ :0 Dave\r\n", 'utf-8');
+			socket.connection.impl.write(":sendak.freenode.net 352 testbot #ircanywhere venko Colchester-LUG/Legen.dary rothfuss.freenode.net Venko H :0 venko\r\n", 'utf-8');
+			socket.connection.impl.write(":sendak.freenode.net 352 testbot #ircanywhere ~D3M0N irc.legalizeourmarijuana.us leguin.freenode.net [D3M0N] H :0 The Almighty D3V1L!\r\n", 'utf-8');
+			socket.connection.impl.write(":sendak.freenode.net 352 testbot #ircanywhere ~lyska op.op.op.oppan.ganghamstyle.pw hobana.freenode.net lyska H :0 Sam Dodrill <niichan@ponychat.net>\r\n", 'utf-8');
+			socket.connection.impl.write(":sendak.freenode.net 352 testbot #ircanywhere ChanServ services. services. ChanServ H@ :0 Channel Services\r\n", 'utf-8');
+			socket.connection.impl.write(":sendak.freenode.net 352 testbot #ircanywhere ~LoganLK 162.243.133.98 rothfuss.freenode.net LoganLK H :0 Logan\r\n", 'utf-8');
+			socket.connection.impl.write(":sendak.freenode.net 352 testbot #ircanywhere sid15915 gateway/web/irccloud.com/x-uvcbvvujowjeeaga leguin.freenode.net JakeXKS G :0 Jake\r\n", 'utf-8');
+			socket.connection.impl.write(":sendak.freenode.net 352 testbot #ircanywhere sid11863 gateway/web/irccloud.com/x-qaysfvklhrsppher leguin.freenode.net Techman G :0 Michael Hazell\r\n", 'utf-8');
+			socket.connection.impl.write(":sendak.freenode.net 352 testbot #ircanywhere ~TkTech irc.tkte.ch kornbluth.freenode.net TkTech H :0 TkTech\r\n", 'utf-8');
+			socket.connection.impl.write(":sendak.freenode.net 352 testbot #ircanywhere ~Trinexx tecnode-gaming.com wolfe.freenode.net zz_Trinexx H :0 Jake\r\n", 'utf-8');
+			socket.connection.impl.write(":sendak.freenode.net 352 testbot #ircanywhere ~Tappy 2605:6400:2:fed5:22:fd8f:98fd:7a74 morgan.freenode.net Tappy H :0 Tappy\r\n", 'utf-8');
+			socket.connection.impl.write(":sendak.freenode.net 315 testbot #ircanywhere :End of /WHO list.\r\n", 'utf-8');
+		}, 0);
+	});
 
 	it('who event should have correct object format', function (done) {
 		Events.once('key.who', function(o) {
 			o.should.have.properties('channel', 'who');
 			done();
 		});
-		setup();
 	});
 
 	it('channel should be correct', function (done) {
@@ -217,7 +210,6 @@ describe('who event', function () {
 			o.channel.should.equal('#ircanywhere');
 			done();
 		});
-		setup();
 	});
 
 	it('who array should be correct', function (done) {
@@ -230,27 +222,26 @@ describe('who event', function () {
 			o.who[0].extra.should.equal('0 realuser');
 			done();
 		});
-		setup();
 	});
 });
 
 describe('whois event', function () {
-	function setup() {
-		var socket = new Client('key', network, readWriteStream);
-		socket.connection.impl.write(":sendak.freenode.net 311 testbot rickibalboa ~ricki unaffiliated/rickibalboa * :Ricki\r\n", 'utf-8');
-		socket.connection.impl.write(":sendak.freenode.net 319 testbot rickibalboa :@#ircanywhere\r\n", 'utf-8');
-		socket.connection.impl.write(":sendak.freenode.net 312 testbot rickibalboa leguin.freenode.net :Ume?, SE, EU\r\n", 'utf-8');
-		socket.connection.impl.write(":sendak.freenode.net 671 testbot rickibalboa :is using a secure connection\r\n", 'utf-8');
-		socket.connection.impl.write(":sendak.freenode.net 330 testbot rickibalboa rickibalboa :is logged in as\r\n", 'utf-8');
-		socket.connection.impl.write(":sendak.freenode.net 318 testbot rickibalboa :End of /WHOIS list.\r\n", 'utf-8');
-	};
+	beforeEach(function() {
+		setTimeout(function() {
+			socket.connection.impl.write(":sendak.freenode.net 311 testbot rickibalboa ~ricki unaffiliated/rickibalboa * :Ricki\r\n", 'utf-8');
+			socket.connection.impl.write(":sendak.freenode.net 319 testbot rickibalboa :@#ircanywhere\r\n", 'utf-8');
+			socket.connection.impl.write(":sendak.freenode.net 312 testbot rickibalboa leguin.freenode.net :Ume?, SE, EU\r\n", 'utf-8');
+			socket.connection.impl.write(":sendak.freenode.net 671 testbot rickibalboa :is using a secure connection\r\n", 'utf-8');
+			socket.connection.impl.write(":sendak.freenode.net 330 testbot rickibalboa rickibalboa :is logged in as\r\n", 'utf-8');
+			socket.connection.impl.write(":sendak.freenode.net 318 testbot rickibalboa :End of /WHOIS list.\r\n", 'utf-8');
+		}, 0);
+	});
 
 	it('whois event should have correct object format', function (done) {
 		Events.once('key.whois', function(o) {
 			o.should.have.properties('nickname', 'username', 'hostname', 'realname', 'channels', 'server', 'serverinfo', 'secure');
 			done();
 		});
-		setup();
 	});
 
 	it('whois object should be correct', function (done) {
@@ -265,24 +256,23 @@ describe('whois event', function () {
 			o.secure.should.equal('is using a secure connection');
 			done();
 		});
-		setup();
 	});
 });
 
 describe('links event', function () {
-	function setup() {
-		var socket = new Client('key', network, readWriteStream);
-		socket.connection.impl.write(":adams.freenode.net 364 testbot services. adams.freenode.net :1 Atheme IRC Services\r\n", 'utf-8');
-		socket.connection.impl.write(":adams.freenode.net 364 testbot adams.freenode.net adams.freenode.net :0 Budapest, HU, EU\r\n", 'utf-8');
-		socket.connection.impl.write(":adams.freenode.net 365 testbot * :End of /LINKS list.\r\n", 'utf-8');
-	};
+	beforeEach(function() {
+		setTimeout(function() {
+			socket.connection.impl.write(":adams.freenode.net 364 testbot services. adams.freenode.net :1 Atheme IRC Services\r\n", 'utf-8');
+			socket.connection.impl.write(":adams.freenode.net 364 testbot adams.freenode.net adams.freenode.net :0 Budapest, HU, EU\r\n", 'utf-8');
+			socket.connection.impl.write(":adams.freenode.net 365 testbot * :End of /LINKS list.\r\n", 'utf-8');
+		}, 0);
+	});
 
 	it('links object should have correct format', function (done) {
 		Events.once('key.links', function(o) {
 			o.should.have.properties('links');
 			done();
 		});
-		setup();
 	});
 
 	it('values should be correct', function (done) {
@@ -293,25 +283,24 @@ describe('links event', function () {
 			o.links[0].description.should.equal('1 Atheme IRC Services');
 			done();
 		});
-		setup();
 	});
 });
 
 describe('list event', function () {
-	function setup() {
-		var socket = new Client('key', network, readWriteStream);
-		socket.connection.impl.write(":leguin.freenode.net 322 testbot #puppet 1058 :Puppet Enterprise 3.1.0: http://bit.ly/PE_31 | Puppet 3.3.2: http://bit.ly/QUjTW0 |  Help: http://{ask,docs}.puppetlabs.com | Bugs & Feature Requests: http://bit.ly/aoNNEP\r\n", 'utf-8');
-		socket.connection.impl.write(":leguin.freenode.net 322 testbot ##linux 1368 : Welcome to ##Linux! Freenode's general Linux support/discussion channel. | Channel website and rules: http://www.linuxassist.net | Our pastebin http://paste.linuxassist.net | Spammers or trolls? use !ops <troll's nick> <reason>\". | For op assistance, join ##linux-ops. Feel at home and enjoy your stay.\r\n", 'utf-8');
-		socket.connection.impl.write(":leguin.freenode.net 322 testbot #git 1082 :Welcome to #git, the place for git-related help and tomato soup | Current stable version: 1.8.5.1 | Start here: http://jk.gs/git | Seeing \"Cannot send to channel\" or unable to change nick? /msg gitinfo .voice | git-hg: Don\'t you know that\'s poison?\r\n", 'utf-8');
-		socket.connection.impl.write(":leguin.freenode.net 323 testbot :End of /LIST\r\n", 'utf-8');
-	};
+	beforeEach(function() {
+		setTimeout(function() {
+			socket.connection.impl.write(":leguin.freenode.net 322 testbot #puppet 1058 :Puppet Enterprise 3.1.0: http://bit.ly/PE_31 | Puppet 3.3.2: http://bit.ly/QUjTW0 |  Help: http://{ask,docs}.puppetlabs.com | Bugs & Feature Requests: http://bit.ly/aoNNEP\r\n", 'utf-8');
+			socket.connection.impl.write(":leguin.freenode.net 322 testbot ##linux 1368 : Welcome to ##Linux! Freenode's general Linux support/discussion channel. | Channel website and rules: http://www.linuxassist.net | Our pastebin http://paste.linuxassist.net | Spammers or trolls? use !ops <troll's nick> <reason>\". | For op assistance, join ##linux-ops. Feel at home and enjoy your stay.\r\n", 'utf-8');
+			socket.connection.impl.write(":leguin.freenode.net 322 testbot #git 1082 :Welcome to #git, the place for git-related help and tomato soup | Current stable version: 1.8.5.1 | Start here: http://jk.gs/git | Seeing \"Cannot send to channel\" or unable to change nick? /msg gitinfo .voice | git-hg: Don\'t you know that\'s poison?\r\n", 'utf-8');
+			socket.connection.impl.write(":leguin.freenode.net 323 testbot :End of /LIST\r\n", 'utf-8');
+		}, 0);
+	});
 
 	it('list object should have correct format', function (done) {
 		Events.once('key.list', function(o) {
 			o.should.have.properties('list');
 			done();
 		});
-		setup();
 	});
 
 	it('list object should be correct', function (done) {
@@ -322,22 +311,21 @@ describe('list event', function () {
 			o.list[0].topic.should.equal('Puppet Enterprise 3.1.0: http://bit.ly/PE_31 | Puppet 3.3.2: http://bit.ly/QUjTW0 |  Help: http://{ask,docs}.puppetlabs.com | Bugs & Feature Requests: http://bit.ly/aoNNEP');
 			done();
 		});
-		setup();
 	});
 });
 
 describe('user mode event', function () {
-	function setup() {
-		var socket = new Client('key', network, readWriteStream);
-		socket.connection.impl.write(":testbot MODE testbot :+i\r\n", 'utf-8');
-	};
+	beforeEach(function() {
+		setTimeout(function() {
+			socket.connection.impl.write(":testbot MODE testbot :+i\r\n", 'utf-8');
+		}, 0);
+	});
 
 	it('mode object should have correct format', function (done) {
 		Events.once('key.usermode', function(o) {
 			o.should.have.properties('nickname', 'mode');
 			done();
 		});
-		setup();
 	});
 
 	it('nick and mode should be correct', function (done) {
@@ -346,22 +334,21 @@ describe('user mode event', function () {
 			o.mode.should.equal('+i');
 			done();
 		});
-		setup();
 	});
 });
 
 describe('mode event', function () {
-	function setup() {
-		var socket = new Client('key', network, readWriteStream);
-		socket.connection.impl.write(":rickibalboa!~ricki@unaffiliated/rickibalboa MODE #ircanywhere-test +i\r\n", 'utf-8');
-	};
+	beforeEach(function() {
+		setTimeout(function() {
+			socket.connection.impl.write(":rickibalboa!~ricki@unaffiliated/rickibalboa MODE #ircanywhere-test +i\r\n", 'utf-8');
+		}, 0);
+	});
 
 	it('mode object should have correct format', function (done) {
 		Events.once('key.mode', function(o) {
 			o.should.have.properties('nickname', 'username', 'hostname', 'channel', 'mode');
 			done();
 		});
-		setup();
 	});
 
 	it('channel and mode should be correct', function (done) {
@@ -373,22 +360,21 @@ describe('mode event', function () {
 			o.mode.should.equal('+i');
 			done();
 		});
-		setup();
 	});
 });
 
 describe('join event', function () {
-	function setup() {
-		var socket = new Client('key', network, readWriteStream);
-		socket.connection.impl.write(":rickibalboa!~ricki@unaffiliated/rickibalboa JOIN #ircanywhere-test\r\n", 'utf-8');
-	};
+	beforeEach(function() {
+		setTimeout(function() {
+			socket.connection.impl.write(":rickibalboa!~ricki@unaffiliated/rickibalboa JOIN #ircanywhere-test\r\n", 'utf-8');
+		}, 0);
+	});
 
 	it('join object should have correct format', function (done) {
 		Events.once('key.join', function(o) {
 			o.should.have.properties('channel', 'username', 'hostname', 'nickname');
 			done();
 		});
-		setup();
 	});
 
 	it('values should be correct', function (done) {
@@ -399,22 +385,21 @@ describe('join event', function () {
 			o.hostname.should.equal('unaffiliated/rickibalboa');
 			done();
 		});
-		setup();
 	});
 });
 
 describe('part event', function () {
-	function setup() {
-		var socket = new Client('key', network, readWriteStream);
-		socket.connection.impl.write(":rickibalboa!~ricki@unaffiliated/rickibalboa PART #ircanywhere-test :with a message\r\n", 'utf-8');
-	};
+	beforeEach(function() {
+		setTimeout(function() {
+			socket.connection.impl.write(":rickibalboa!~ricki@unaffiliated/rickibalboa PART #ircanywhere-test :with a message\r\n", 'utf-8');
+		}, 0);
+	});
 
 	it('part object should have correct format', function (done) {
 		Events.once('key.part', function(o) {
 			o.should.have.properties('channel', 'username', 'hostname', 'nickname', 'message');
 			done();
 		});
-		setup();
 	});
 
 	it('channel and nick should be correct', function (done) {
@@ -425,7 +410,6 @@ describe('part event', function () {
 			o.hostname.should.equal('unaffiliated/rickibalboa');
 			done();
 		});
-		setup();
 	});
 
 	it('message should be correct', function (done) {
@@ -433,22 +417,21 @@ describe('part event', function () {
 			o.message.should.equal('with a message');
 			done();
 		});
-		setup();
 	});
 });
 
 describe('kick event', function () {
-	function setup() {
-		var socket = new Client('key', network, readWriteStream);
-		socket.connection.impl.write(":rickibalboa!~ricki@unaffiliated/rickibalboa KICK #ircanywhere-test testbot :bye mate\r\n", 'utf-8');
-	};
+	beforeEach(function() {
+		setTimeout(function() {
+			socket.connection.impl.write(":rickibalboa!~ricki@unaffiliated/rickibalboa KICK #ircanywhere-test testbot :bye mate\r\n", 'utf-8');
+		}, 0);
+	});
 
 	it('kick object should have correct format', function (done) {
 		Events.once('key.kick', function(o) {
 			o.should.have.properties('channel', 'username', 'hostname', 'nickname', 'kicked', 'message');
 			done();
 		});
-		setup();
 	});
 
 	it('values should be correct', function (done) {
@@ -461,22 +444,21 @@ describe('kick event', function () {
 			o.message.should.equal('bye mate');
 			done();
 		});
-		setup();
 	});
 });
 
 describe('quit event', function () {
-	function setup() {
-		var socket = new Client('key', network, readWriteStream);
-		socket.connection.impl.write(":rickibalboa!~ricki@unaffiliated/rickibalboa QUIT :Ping timeout: 240 seconds\r\n", 'utf-8');
-	};
+	beforeEach(function() {
+		setTimeout(function() {
+			socket.connection.impl.write(":rickibalboa!~ricki@unaffiliated/rickibalboa QUIT :Ping timeout: 240 seconds\r\n", 'utf-8');
+		}, 0);
+	});
 
 	it('quit object should have correct format', function (done) {
 		Events.once('key.quit', function(o) {
 			o.should.have.properties('nickname', 'username', 'hostname', 'message');
 			done();
 		});
-		setup();
 	});
 
 	it('values should be correct', function (done) {
@@ -487,22 +469,21 @@ describe('quit event', function () {
 			o.message.should.equal('Ping timeout: 240 seconds');
 			done();
 		});
-		setup();
 	});
 });
 
 describe('invite event', function () {
-	function setup() {
-		var socket = new Client('key', network, readWriteStream);
-		socket.connection.impl.write(":rickibalboa!~ricki@unaffiliated/rickibalboa INVITE testbot :#ircanywhere-test\r\n", 'utf-8');
-	};
+	beforeEach(function() {
+		setTimeout(function() {
+			socket.connection.impl.write(":rickibalboa!~ricki@unaffiliated/rickibalboa INVITE testbot :#ircanywhere-test\r\n", 'utf-8');
+		}, 0);
+	});
 
 	it('invite object should have correct format', function (done) {
 		Events.once('key.invite', function(o) {
 			o.should.have.properties('nickname', 'username', 'hostname', 'channel');
 			done();
 		});
-		setup();
 	});
 
 	it('values should be correct', function (done) {
@@ -513,23 +494,22 @@ describe('invite event', function () {
 			o.channel.should.equal('#ircanywhere-test');
 			done();
 		});
-		setup();
 	});
 });
 
 describe('away/unaway event as per away-notify', function () {
-	function setup() {
-		var socket = new Client('key', network, readWriteStream);
-		socket.connection.impl.write(":rickibalboa!~ricki@unaffiliated/rickibalboa AWAY :im going away\r\n", 'utf-8');
-		socket.connection.impl.write(":rickibalboa!~ricki@unaffiliated/rickibalboa AWAY :\r\n", 'utf-8');
-	};
+	beforeEach(function() {
+		setTimeout(function() {
+			socket.connection.impl.write(":rickibalboa!~ricki@unaffiliated/rickibalboa AWAY :im going away\r\n", 'utf-8');
+			socket.connection.impl.write(":rickibalboa!~ricki@unaffiliated/rickibalboa AWAY :\r\n", 'utf-8');
+		}, 0);
+	});
 
 	it('away object should have correct format', function (done) {
 		Events.once('key.away', function(o) {
 			o.should.have.properties('nickname', 'username', 'hostname', 'message');
 			done();
 		});
-		setup();
 	});
 
 	it('unaway object should have correct format', function (done) {
@@ -538,7 +518,6 @@ describe('away/unaway event as per away-notify', function () {
 			o.should.not.have.property('message');
 			done();
 		});
-		setup();
 	});
 
 	it('away values should be correct', function (done) {
@@ -549,7 +528,6 @@ describe('away/unaway event as per away-notify', function () {
 			o.message.should.equal('im going away');
 			done();
 		});
-		setup();
 	});
 
 	it('unaway values should be correct', function (done) {
@@ -559,22 +537,21 @@ describe('away/unaway event as per away-notify', function () {
 			o.hostname.should.equal('unaffiliated/rickibalboa');
 			done();
 		});
-		setup();
 	});
 });
 
 describe('privmsg event', function () {
-	function setup() {
-		var socket = new Client('key', network, readWriteStream);
-		socket.connection.impl.write(":rickibalboa!~ricki@unaffiliated/rickibalboa PRIVMSG #ircanywhere-test :hey there, this is a privmsg\r\n", 'utf-8');
-	};
+	beforeEach(function() {
+		setTimeout(function() {
+			socket.connection.impl.write(":rickibalboa!~ricki@unaffiliated/rickibalboa PRIVMSG #ircanywhere-test :hey there, this is a privmsg\r\n", 'utf-8');
+		}, 0);
+	});
 
 	it('privmsg object should have correct format', function (done) {
 		Events.once('key.privmsg', function(o) {
 			o.should.have.properties('nickname', 'username', 'hostname', 'target', 'message');
 			done();
 		});
-		setup();
 	});
 
 	it('values should be correct', function (done) {
@@ -586,22 +563,21 @@ describe('privmsg event', function () {
 			o.message.should.equal('hey there, this is a privmsg');
 			done();
 		});
-		setup();
 	});
 });
 
 describe('notice event', function () {
-	function setup() {
-		var socket = new Client('key', network, readWriteStream);
-		socket.connection.impl.write(":rickibalboa!~ricki@unaffiliated/rickibalboa NOTICE testbot :hi, just sending you a notice\r\n", 'utf-8');
-	};
+	beforeEach(function() {
+		setTimeout(function() {
+			socket.connection.impl.write(":rickibalboa!~ricki@unaffiliated/rickibalboa NOTICE testbot :hi, just sending you a notice\r\n", 'utf-8');
+		}, 0);
+	});
 
 	it('notice object should have correct format', function (done) {
 		Events.once('key.notice', function(o) {
 			o.should.have.properties('nickname', 'username', 'hostname', 'target', 'message');
 			done();
 		});
-		setup();
 	});
 
 	it('values should be correct', function (done) {
@@ -613,22 +589,21 @@ describe('notice event', function () {
 			o.message.should.equal('hi, just sending you a notice');
 			done();
 		});
-		setup();
 	});
 });
 
 describe('action event', function () {
-	function setup() {
-		var socket = new Client('key', network, readWriteStream);
-		socket.connection.impl.write(":rickibalboa!~ricki@unaffiliated/rickibalboa PRIVMSG #ircanywhere-test :+ACTION hey just an action test here\r\n", 'utf-8');
-	};
+	beforeEach(function() {
+		setTimeout(function() {
+			socket.connection.impl.write(":rickibalboa!~ricki@unaffiliated/rickibalboa PRIVMSG #ircanywhere-test :+ACTION hey just an action test here\r\n", 'utf-8');
+		}, 0);
+	});
 
 	it('action object should have correct format', function (done) {
 		Events.once('key.action', function(o) {
 			o.should.have.properties('nickname', 'username', 'hostname', 'target', 'message');
 			done();
 		});
-		setup();
 	});
 
 	it('values should be correct', function (done) {
@@ -640,22 +615,21 @@ describe('action event', function () {
 			o.message.should.equal('hey just an action test here');
 			done();
 		});
-		setup();
 	});
 });
 
 describe('ctcp request event', function () {
-	function setup() {
-		var socket = new Client('key', network, readWriteStream);
-		socket.connection.impl.write(":rickibalboa!~ricki@unaffiliated/rickibalboa PRIVMSG testbot :+VERSION\r\n", 'utf-8');
-	};
+	beforeEach(function() {
+		setTimeout(function() {
+			socket.connection.impl.write(":rickibalboa!~ricki@unaffiliated/rickibalboa PRIVMSG testbot :+VERSION\r\n", 'utf-8');
+		}, 0);
+	});
 
 	it('ctcp request object should have correct format', function (done) {
 		Events.once('key.ctcp_request', function(o) {
 			o.should.have.properties('nickname', 'username', 'hostname', 'type', 'target');
 			done();
 		});
-		setup();
 	});
 
 	it('values should be correct', function (done) {
@@ -667,22 +641,21 @@ describe('ctcp request event', function () {
 			o.target.should.equal('testbot');
 			done();
 		});
-		setup();
 	});
 });
 
 describe('ctcp response event', function () {
-	function setup() {
-		var socket = new Client('key', network, readWriteStream);
-		socket.connection.impl.write(":rickibalboa!~ricki@unaffiliated/rickibalboa NOTICE testbot :VERSION HexChat 2.9.5 [x64] / Windows 8 [3.43GHz]\r\n", 'utf-8');
-	};
+	beforeEach(function() {
+		setTimeout(function() {
+			socket.connection.impl.write(":rickibalboa!~ricki@unaffiliated/rickibalboa NOTICE testbot :VERSION HexChat 2.9.5 [x64] / Windows 8 [3.43GHz]\r\n", 'utf-8');
+		}, 0);
+	});
 
 	it('ctcp response object should have correct format', function (done) {
 		Events.once('key.ctcp_response', function(o) {
 			o.should.have.properties('nickname', 'username', 'hostname', 'type', 'target', 'message');
 			done();
 		});
-		setup();
 	});
 
 	it('values should be correct', function (done) {
@@ -695,6 +668,5 @@ describe('ctcp response event', function () {
 			o.message.should.equal('HexChat 2.9.5 [x64] / Windows 8 [3.43GHz]');
 			done();
 		});
-		setup();
 	});
 });
