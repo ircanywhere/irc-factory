@@ -4,3 +4,6 @@ node_js:
   - "0.10"
 notifications:
   webhooks: http://n.tkte.ch/h/1774/lhRvL-6GH1xzdX80mRsiE1Zr
+cache:
+  directories:
+    - node_modules
