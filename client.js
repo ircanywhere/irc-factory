@@ -21,7 +21,7 @@ incoming.on('message', function(msg) {
 		outgoing.emit('Client', {
 			key: 'test',
 			call: 'raw',
-			params: ['PRIVMSG rickibalboa :hey there just testing... :/']
+			params: ['PRIVMSG #ircanywhere :hey there just testing... :/']
 		});
 	}
 });
