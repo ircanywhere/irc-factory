@@ -101,10 +101,10 @@ describe('motd event', function () {
 
 	it('motd should be correct', function (done) {
 		Events.once('key.motd', function(o) {
-			o.should.eql({motd: ['- sendak.freenode.net Message of the Day -',
+			o.motd.should.eql(['- sendak.freenode.net Message of the Day -',
 				'- Welcome to moorcock.freenode.net in Texas, USA. Thanks to',
 				'- Kodingen (http://kodingen.com) for sponsoring this server!',
-				'End of /MOTD command.']});
+				'End of /MOTD command.']);
 			done();
 		});
 	});
