@@ -15,8 +15,15 @@ incoming.format('json');
 outgoing.connect(31930);
 // setup our outgoing connection
 
-incoming.on('message', function(msg){
+incoming.on('message', function(msg) {
 	console.log(msg);
+	if (msg.event[0] == 'test' && msg.event[1] == 'motd') {
+		outgoing.emit('Client', {
+			key: 'test',
+			call: 'raw',
+			params: ['PRIVMSG rickibalboa :hey there just testing... :/']
+		});
+	}
 });
 // handle incoming events, we don't use an event emitter because
 // of the fact we want queueing.
@@ -34,4 +41,4 @@ setTimeout(function() {
 		}
 	});
 }, 1500);
-// lets send an event for lulz
+// create a client
