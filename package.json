@@ -18,7 +18,7 @@
     "eventemitter2": "0.4.13",
     "irc-message": "0.2.0",
     "simple-irc-socket": "1.2.1",
-    "dnode": "1.1.0",
+    "axon": "1.0.0",
     "underscore": "1.5.2"
   },
   "repository": {
