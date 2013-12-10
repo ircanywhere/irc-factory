@@ -12,14 +12,14 @@
 	"devDependencies": {
 		"mocha": "1.15.1",
 		"should": "2.1.0",
-		"sinon": "1.7.3",
-		"lodash": "*"
+		"sinon": "1.7.3"
 	},
 	"dependencies": {
 		"eventemitter2": "0.4.13",
 		"irc-message": "0.2.0",
 		"simple-irc-socket": "1.2.1",
-		"dnode": "1.1.0"
+		"dnode": "1.1.0",
+		"underscore": "1.5.2"
 	},
 	"repository": {
 		"type": "git",
