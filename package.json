@@ -17,7 +17,7 @@
   "dependencies": {
     "eventemitter2": "0.4.13",
     "irc-message": "0.2.0",
-    "simple-irc-socket": "1.2.1",
+    "simple-irc-socket": "https://github.com/rickihastings/simple-irc-socket/tarball/master",
     "axon": "1.0.0",
     "underscore": "1.5.2"
   },
