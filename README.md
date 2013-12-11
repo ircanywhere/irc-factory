@@ -15,7 +15,7 @@ var api = new ircFactory.Api();
 
 ### api.createClient(key, object, [dummy])
 
-The following function will create a non-long running client, if you just want to create a normal bot or a client for testing then you should use this, if you want a client that survives between shutdowns, you'll need to jump to [api.fork()](#apifork-exit). The dummy parameter is optional and is mainly used for testing, it can be ignored. Each client has to have a unique key, you could generate a hash of the client object and pass it in or something similar.
+The following function will create a non-long running client, if you just want to create a normal bot or a client for testing then you should use this, if you want a client that survives between shutdowns, you'll need to jump to [api.fork()](#apiforkexit). The dummy parameter is optional and is mainly used for testing, it can be ignored. Each client has to have a unique key, you could generate a hash of the client object and pass it in or something similar.
 
 ```
 var client = api.createClient('unique-client-key', {
@@ -29,18 +29,6 @@ var client = api.createClient('unique-client-key', {
 ```
 
 This function returns an object which contains a key `irc` which is an instance of [Client](#client), we can use this to directly control the client.
-
-### Client
-
-The following functions are available and they're fairly self explanatory.
-
-- `Client.raw(line)` -> `Client.raw('PRIVMSG #ircanywhere :hey there');` or `Client.raw(['PRIVMSG', '#ircanywhere', 'hey there']);`
-- `Client.me(target, message)` -> `Client.me('#ircanywhere', 'this will be sent as /me');`
-- `Client.ctcp()` -> `Client.ctcp('rickibalboa', 'VERSION', 'irc-factory x.x');`
-- `Client.disconnect(message)` -> `Client.disconnect('quitting');`
-- `Client.reconnect()` -> `Client.reconnect();`
-
-Reconnect will connect a client if its disconnected, if it's connected it will disconnect that client. It's advised to call `Client.connection.isConnected()` if you want to check before you attempt a reconnect.
 
 ### api.destroyClient(key)
 
@@ -103,27 +91,63 @@ incoming.on('message', function(msg){
 // of the fact we want queueing.
 
 setTimeout(function() {
-	outgoing.emit('createClient', {
-		key: 'test',
-		client: {
-			nick : 'simpleircbot',
-			user : 'testuser',
-			server : 'irc.freenode.net',
-			realname: 'realbot',
-			port: 6667,
-			secure: false
-		}
+	outgoing.emit('createClient', 'test', {
+		nick : 'simpleircbot',
+		user : 'testuser',
+		server : 'irc.freenode.net',
+		realname: 'realbot',
+		port: 6667,
+		secure: false
 	});
 }, 1500);
 // create a client
 ```
 
-What this is going to do is wait 1.5 seconds and create a client with the key test and some settings, once a client is created using `createClient`, all events are automatically hooked onto and come down the `incoming` pipe, if your program closes, when you reconnect any events that were sent will be queued and sent down the pipe to you.
-
 The following commands are available to be sent down the pipe, they only take one command and it's the parameters sent as an object.
 
-- `createClient(options)` -> `api.createClient(options.key, options.client, [options.dummy])`
-- `destroyClient(options)` -> `api.destroyClient(options.key)`
-- `Client(options)` -> `{key: 'unique-client-key', call: 'me', params: ['#ircanywhere', 'this is a me command']}`
+### outgoing.emit('createClient', key, client, [dummy])
 
-The final command will call the `me()` function in `Client` and send `options.params` in as the parameters. If you need help with anything feel free to catch me in my channel on freenode #ircanywhere. You should be fairly careful what you pass in here as you can crash the backend process, it doesn't wrap anything in a try catch or a domain because it's too slow, it just checks if the property exists and if it does, calls it directly.
+This function is an alias of `api.createClient` with the difference being that all events are automatically hooked onto and come down the `incoming` pipe, if your program closes, when you reconnect any events that were sent will be queued and sent down the pipe to you.
+
+### outgoing.emit('destroyClient', key)
+
+This function is a direct alias of `api.destroyClient` all hooks will also be removed when this is called.
+
+### outgoing.emit('call', key, function, params)
+
+This function lets us call a method in the `Client` object any method can be called even private ones which are prefixed with `_` however beware of what you are doing, it's most commonly used for calling the methods `raw`, `me`, `ctcp` etc. `params` takes an array of the parameters that will be passed into the function call.
+
+## Client
+
+The following functions are available and they're fairly self explanatory.
+
+### Client.raw(line)
+
+This function lets us pass a raw line into the irc socket, we can either send a normal raw irc line without the linebreaks at the end or send an array in of a string seperated by spaces.
+
+`Client.raw('PRIVMSG #ircanywhere :hey there');` or `Client.raw(['PRIVMSG', '#ircanywhere', 'hey there']);`
+
+### Client.me(target, message)
+
+This function lets us send a /me action to the specified target, being a channel or user.
+
+`Client.me('#ircanywhere', 'this will be sent as /me');`
+
+
+### Client.ctcp(target, type, message)
+
+This function lets us send a ctcp response to a person, we can listen to ctcp requests by hooking onto the `ctcp_request` event and responsing to versions etc with this, an example is below;
+
+`Client.ctcp('rickibalboa', 'VERSION', 'irc-factory x.x');`
+
+### Client.disconnect(message)
+
+The following function will disconnect the user from the irc server sending the `message` as a quit message, the `close` event will be emitted when the client quits. If the client is already disconnected nothing will happen and the `close` event will be re-emitted so any client can alter their state accordingly.
+
+`Client.disconnect('quitting');`
+
+### Client.reconnect()
+
+Reconnect will connect a client if its disconnected, if it's connected it will disconnect that client. It's advised to call `Client.connection.isConnected()` if you want to check before you attempt a reconnect.
+
+`Client.reconnect();`

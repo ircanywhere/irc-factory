@@ -18,27 +18,20 @@ outgoing.connect(31930);
 incoming.on('message', function(msg) {
 	console.log(msg);
 	if (msg.event[0] == 'test' && msg.event[1] == 'motd') {
-		outgoing.emit('Client', {
-			key: 'test',
-			call: 'raw',
-			params: ['PRIVMSG #ircanywhere :hey there just testing... :/']
-		});
+		outgoing.emit('call', 'test', 'raw', ['PRIVMSG rickibalboa :hey there just testing... :/']);
 	}
 });
 // handle incoming events, we don't use an event emitter because
 // of the fact we want queueing.
 
 setTimeout(function() {
-	outgoing.emit('createClient', {
-		key: 'test',
-		client: {
-			nick : 'simpleircbot',
-			user : 'testuser',
-			server : 'irc.freenode.net',
-			realname: 'realbot',
-			port: 6667,
-			secure: false
-		}
+	outgoing.emit('createClient', 'test', {
+		nick : 'simpleircbot',
+		user : 'testuser',
+		server : 'irc.freenode.net',
+		realname: 'realbot',
+		port: 6667,
+		secure: false
 	});
 }, 1500);
 // create a client
