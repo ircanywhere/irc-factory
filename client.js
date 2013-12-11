@@ -38,7 +38,7 @@ function createClient() {
 	outgoing.emit('createClient', 'test', {
 		nick : 'simpleircbot',
 		user : 'testuser',
-		server : 'irc.freenode.netoa',
+		server : 'irc.freenode.net',
 		realname: 'realbot',
 		port: 6667,
 		secure: false
