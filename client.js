@@ -16,15 +16,25 @@ outgoing.connect(31930);
 // setup our outgoing connection
 
 incoming.on('message', function(msg) {
-	console.log(msg);
-	if (msg.event[0] == 'test' && msg.event[1] == 'motd') {
-		outgoing.emit('call', 'test', 'raw', ['PRIVMSG rickibalboa :hey there just testing... :/']);
+	if (msg.event == 'synchronize') {
+		if (msg.keys.length == 0) {
+			setTimeout(createClient, 1500);
+			// no client lets create one in 1.5 seconds
+		}
+		console.log(msg);
+		return;
 	}
+
+	if (msg.event[0] == 'test' && msg.event[1] == 'motd') {
+		outgoing.emit('call', 'test', 'raw', ['JOIN #ircanywhere-test']);
+	}
+
+	console.log(msg);
 });
 // handle incoming events, we don't use an event emitter because
 // of the fact we want queueing.
 
-setTimeout(function() {
+function createClient() {
 	outgoing.emit('createClient', 'test', {
 		nick : 'simpleircbot',
 		user : 'testuser',
@@ -33,5 +43,5 @@ setTimeout(function() {
 		port: 6667,
 		secure: false
 	});
-}, 1500);
+};
 // create a client
