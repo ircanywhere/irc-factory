@@ -1,7 +1,7 @@
 {
   "name": "irc-factory",
   "description": "A library for creating multiple IRC clients and managing them based on irc-socket and irc-message",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "author": "Ricki Hastings <ricki@ircanywhere.com> (https://ircanywhere.com)",
   "contributors": [
     {
