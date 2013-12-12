@@ -18,72 +18,64 @@ var socket = new Client('key', network, readWriteStream);
 describe('registered event', function () {
 	beforeEach(function() {
 		setTimeout(function() {
-			socket.connection.impl.rewrite(":sendak.freenode.net 001 testbot :Welcome to the Test IRC Network testbot!testuser@localhost\r\n", 'utf-8');
-		}, 0);
-	});
-
-	it('registered event should have nickname property', function (done) {
-		Events.once('key.registered', function(o) {
-			o.should.have.property('nickname');
-			done();
-		});
-	});
-
-	it('registered event nickname property should equal testbot', function (done) {
-		Events.once('key.registered', function(o) {
-			o.nickname.should.equal('testbot');
-			done();
-		});
-	});
-});
-
-describe('capabilities event', function () {
-	beforeEach(function() {
-		setTimeout(function() {
-			socket.connection.impl.rewrite(":sendak.freenode.net 004 testbot moorcock.freenode.net ircd-seven-1.1.3 DOQRSZaghilopswz CFILMPQSbcefgijklmnopqrstvz bkloveqjfI\r\n", 'utf-8');
+			socket.connection.impl.rewrite(":sendak.freenode.net 001 testbot :Welcome to the freenode IRC Network testbot\r\n", 'utf-8');
+			socket.connection.impl.rewrite(":sendak.freenode.net 002 testbot :Your host is sendak.freenode.net[130.239.18.172/6697], running version ircd-seven-1.1.3\r\n", 'utf-8');
+			socket.connection.impl.rewrite(":sendak.freenode.net 003 testbot :This server was created Mon Dec 31 2012 at 22:37:58 CET\r\n", 'utf-8');
+			socket.connection.impl.rewrite(":sendak.freenode.net 004 testbot sendak.freenode.net ircd-seven-1.1.3 DOQRSZaghilopswz CFILMPQSbcefgijklmnopqrstvz bkloveqjfI\r\n", 'utf-8');
 			socket.connection.impl.rewrite(":sendak.freenode.net 005 testbot CHANTYPES=# EXCEPTS INVEX CHANMODES=eIbq,k,flj,CFLMPQScgimnprstz CHANLIMIT=#:120 PREFIX=(ov)@+ MAXLIST=bqeI:100 MODES=4 NETWORK=freenode KNOCKSTATUSMSG=@+ CALLERID=g :are supported by this server\r\n", 'utf-8');
 			socket.connection.impl.rewrite(":sendak.freenode.net 005 testbot CASEMAPPING=rfc1459 CHARSET=ascii NICKLEN=16 CHANNELLEN=50 TOPICLEN=390 ETRACE CPRIVMSG CNOTICE DEAF=D MONITOR=100 FNC TARGMAX=NAMES:1,LIST:1,KICK:1,WHOIS:1,PRIVMSG:4,NOTICE:4,ACCEPT:,MONITOR: :are supported by this server\r\n", 'utf-8');
 			socket.connection.impl.rewrite(":sendak.freenode.net 005 testbot EXTBAN=$,arxz WHOX CLIENTVER=3.0 SAFELIST ELIST=CTU :are supported by this server\r\n", 'utf-8');
 		}, 0);
 	});
 
-	it('capabilities event should have correct object format', function (done) {
-		Events.once('key.capabilities', function(o) {
-			o.should.have.property('channel');
-			o.channel.should.have.properties('idlength', 'limit', 'modes', 'prefixes', 'types');
-			o.should.have.properties('kicklength', 'maxlist', 'maxtargets', 'modes', 'modeForPrefix', 'prefixForMode', 'nicklength', 'topiclength', 'usermodes', 'name');
+	it('registered event should have correct object format', function (done) {
+		Events.once('key.registered', function(o) {
+			o.should.have.properties('nickname', 'capabilities', 'time', 'raw');
+			o.capabilities.should.have.properties('network', 'channel', 'modes');
+			o.capabilities.network.should.have.properties('name', 'hostname', 'ircd', 'nicklength', 'maxtargets');
+			o.capabilities.channel.should.have.properties('idlength', 'limit', 'length', 'modes', 'types', 'kicklength', 'topiclength');
+			o.capabilities.modes.should.have.properties('user', 'channel', 'param', 'types', 'prefixes', 'prefixmodes', 'maxlist');
 			done();
 		});
 	});
 
-	it('capabilities event should have correct channel object', function (done) {
-		Events.once('key.capabilities', function(o) {
-			o.channel.idlength.should.be.empty;
-			o.channel.length.should.equal(50);
-			o.channel.limit.should.eql({'#': 120});
-			o.channel.modes.a.should.equal('eIbq');
-			o.channel.modes.b.should.equal('kov');
-			o.channel.modes.c.should.equal('flj');
-			o.channel.modes.d.should.equal('CFLMPQScgimnprstz');
-			o.channel.prefixes.should.equal('@+');
-			o.channel.types.should.equal('#');
-			done();
-		});
-	});
-
-	it('capabilities event should have correct values', function (done) {
-		Events.once('key.capabilities', function(o) {
-			o.kicklength.should.equal(0);
-			o.maxlist.should.eql({bqeI: 100});
-			o.maxtargets.should.eql({NAMES: 1, LIST: 1, KICK: 1, WHOIS: 1, PRIVMSG: 4,
+	it('registered event should have correct network object', function (done) {
+		Events.once('key.registered', function(o) {
+			o.capabilities.network.name.should.equal('freenode');
+			o.capabilities.network.hostname.should.equal('sendak.freenode.net');
+			o.capabilities.network.ircd.should.equal('ircd-seven-1.1.3');
+			o.capabilities.network.nicklength.should.equal(16);
+			o.capabilities.network.maxtargets.should.eql({NAMES: 1, LIST: 1, KICK: 1, WHOIS: 1, PRIVMSG: 4,
 				NOTICE: 4, ACCEPT: 0, MONITOR: 0});
-			o.modes.should.equal(3);
-			o.modeForPrefix.should.eql({'@': 'o', '+': 'v'});
-			o.prefixForMode.should.eql({'o': '@', 'v': '+'});
-			o.nicklength.should.equal(16);
-			o.topiclength.should.equal(390);
-			o.usermodes.should.equal('DOQRSZaghilopswz');
-			o.name.should.equal('freenode');
+			done();
+		});
+	});
+
+	it('registered event should have correct channel object', function (done) {
+		Events.once('key.registered', function(o) {
+			o.capabilities.channel.idlength.should.be.empty;
+			o.capabilities.channel.limit.should.eql({'#': 120});
+			o.capabilities.channel.length.should.equal(50);
+			o.capabilities.channel.modes.should.equal(4);
+			o.capabilities.channel.types.should.equal('#');
+			o.capabilities.channel.kicklength.should.equal(0);
+			o.capabilities.channel.topiclength.should.equal(390);
+			done();
+		});
+	});
+
+	it('registered event should have correct modes object', function (done) {
+		Events.once('key.registered', function(o) {
+			o.capabilities.modes.user.should.equal('DOQRSZaghilopswz');
+			o.capabilities.modes.channel.should.equal('CFILMPQSbcefgijklmnopqrstvz');
+			o.capabilities.modes.param.should.equal('bkloveqjfI');
+			o.capabilities.modes.types.a.should.equal('eIbq');
+			o.capabilities.modes.types.b.should.equal('kov');
+			o.capabilities.modes.types.c.should.equal('flj');
+			o.capabilities.modes.types.d.should.equal('CFLMPQScgimnprstz');
+			o.capabilities.modes.prefixes.should.equal('@+');
+			o.capabilities.modes.prefixmodes.should.eql({'o': '@', 'v': '+'});
+			o.capabilities.modes.maxlist.should.eql({bqeI: 100});
 			done();
 		});
 	});

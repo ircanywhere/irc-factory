@@ -19,7 +19,13 @@ describe('api.createClient() tests', function () {
 
 	beforeEach(function() {
 		setTimeout(function() {
-			client.irc.connection.impl.rewrite(":sendak.freenode.net 001 testbot :Welcome to the Test IRC Network testbot!testuser@localhost\r\n", 'utf-8');
+			client.irc.connection.impl.rewrite(":sendak.freenode.net 001 testbot :Welcome to the freenode IRC Network testbot\r\n", 'utf-8');
+			client.irc.connection.impl.rewrite(":sendak.freenode.net 002 testbot :Your host is sendak.freenode.net[130.239.18.172/6697], running version ircd-seven-1.1.3\r\n", 'utf-8');
+			client.irc.connection.impl.rewrite(":sendak.freenode.net 003 testbot :This server was created Mon Dec 31 2012 at 22:37:58 CET\r\n", 'utf-8');
+			client.irc.connection.impl.rewrite(":sendak.freenode.net 004 testbot sendak.freenode.net ircd-seven-1.1.3 DOQRSZaghilopswz CFILMPQSbcefgijklmnopqrstvz bkloveqjfI\r\n", 'utf-8');
+			client.irc.connection.impl.rewrite(":sendak.freenode.net 005 testbot CHANTYPES=# EXCEPTS INVEX CHANMODES=eIbq,k,flj,CFLMPQScgimnprstz CHANLIMIT=#:120 PREFIX=(ov)@+ MAXLIST=bqeI:100 MODES=4 NETWORK=freenode KNOCKSTATUSMSG=@+ CALLERID=g :are supported by this server\r\n", 'utf-8');
+			client.irc.connection.impl.rewrite(":sendak.freenode.net 005 testbot CASEMAPPING=rfc1459 CHARSET=ascii NICKLEN=16 CHANNELLEN=50 TOPICLEN=390 ETRACE CPRIVMSG CNOTICE DEAF=D MONITOR=100 FNC TARGMAX=NAMES:1,LIST:1,KICK:1,WHOIS:1,PRIVMSG:4,NOTICE:4,ACCEPT:,MONITOR: :are supported by this server\r\n", 'utf-8');
+			client.irc.connection.impl.rewrite(":sendak.freenode.net 005 testbot EXTBAN=$,arxz WHOX CLIENTVER=3.0 SAFELIST ELIST=CTU :are supported by this server\r\n", 'utf-8');
 			client.irc.connection.impl.rewrite(":rickibalboa!~ricki@unaffiliated/rickibalboa NOTICE testbot :hi, just sending you a notice\r\n", 'utf-8');
 			client.irc.connection.impl.rewrite(":rickibalboa!~ricki@unaffiliated/rickibalboa NOTICE testbot :hi, just sending you a notice again\r\n", 'utf-8');
 		}, 0);
