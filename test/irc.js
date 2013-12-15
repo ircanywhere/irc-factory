@@ -102,6 +102,28 @@ describe('motd event', function () {
 	});
 });
 
+describe('nick event', function () {
+	beforeEach(function() {
+		setTimeout(function() {
+			socket.connection.impl.rewrite(":rickibalboa!~ricki@unaffiliated/rickibalboa NICK :ricki\r\n", 'utf-8');
+		}, 0);
+	});
+
+	it('nick event should have correct object format', function (done) {
+		Events.once('key.nick', function(o) {
+			o.should.have.properties('nickname', 'username', 'hostname', 'newnick', 'time');
+			done();
+		});
+	});
+
+	it('new nickname should be correct', function (done) {
+		Events.once('key.nick', function(o) {
+			o.newnick.should.equal('ricki');
+			done();
+		});
+	});
+});
+
 describe('topic event', function () {
 	beforeEach(function() {
 		setTimeout(function() {
