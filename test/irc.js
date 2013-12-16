@@ -124,11 +124,48 @@ describe('nick event', function () {
 	});
 });
 
-describe('topic event', function () {
+describe('topic numeric event', function () {
 	beforeEach(function() {
 		setTimeout(function() {
 			socket.connection.impl.rewrite(":sendak.freenode.net 332 testbot #ircanywhere :IRCAnywhere, moved to freenode. Development has restarted using meteor.js in 0.2.0 branch https://github.com/ircanywhere/ircanywhere/tree/0.2.0\r\n", 'utf-8');
 			socket.connection.impl.rewrite(":sendak.freenode.net 333 testbot #ircanywhere rickibalboa!~ricki@unaffiliated/rickibalboa 1385050715\r\n", 'utf-8');
+		}, 0);
+	});
+
+	it('topic event should have correct object format', function (done) {
+		Events.once('key.topic', function(o) {
+			o.should.have.properties('channel', 'topic', 'topicBy');
+			done();
+		});
+	});
+
+	it('channel should be correct', function (done) {
+		Events.once('key.topic', function(o) {
+			o.channel.should.equal('#ircanywhere');
+			done();
+		});
+	});
+
+	it('topic should be correct', function (done) {
+		Events.once('key.topic', function(o) {
+			o.topic.should.have.equal('IRCAnywhere, moved to freenode. Development has restarted using meteor.js in 0.2.0 branch https://github.com/ircanywhere/ircanywhere/tree/0.2.0');
+			done();
+		});
+	});
+
+	it('topic setter should be correct', function (done) {
+		Events.once('key.topic', function(o) {
+			o.topicBy.should.have.equal('rickibalboa!~ricki@unaffiliated/rickibalboa');
+			done();
+		});
+	});
+});
+
+
+describe('topic event', function () {
+	beforeEach(function() {
+		setTimeout(function() {
+			socket.connection.impl.rewrite(":rickibalboa!~ricki@unaffiliated/rickibalboa TOPIC #ircanywhere :IRCAnywhere, moved to freenode. Development has restarted using meteor.js in 0.2.0 branch https://github.com/ircanywhere/ircanywhere/tree/0.2.0\r\n", 'utf-8');
 		}, 0);
 	});
 
