@@ -1,4 +1,4 @@
-# irc-factory [![Build Status](https://travis-ci.org/ircanywhere/irc-factory.png)](https://travis-ci.org/ircanywhere/irc-factory)
+# irc-factory [![Build Status](https://travis-ci.org/ircanywhere/irc-factory.png)](https://travis-ci.org/ircanywhere/irc-factory) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/ircanywhere/irc-factory/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 A rebuilt irc-factory from [irc-socket](https://github.com/Havvy/irc-socket) and [irc-message](https://github.com/expr/irc-message), irc-factory was originally based on [node-irc](https://github.com/martynsmith/node-irc), however it got hacked away at and eventually turned into a half functional slow pile of junk.
 
