@@ -67,7 +67,7 @@ This is where the fun stuff happens, when we call this function it goes off in t
 So the interface for controlling clients is  a little different once we've forked, what happens when it's forked is two communication lines are fired up on ports `31920` and `31930`. An example of how to create a client and listen to events are is below;
 
 ```javascript
-var axon = require('axon'),
+var axon = require('irc-factory').axon,
 	incoming = axon.socket('pull'),
 	outgoing = axon.socket('pub-emitter');
 

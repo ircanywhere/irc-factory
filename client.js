@@ -1,4 +1,4 @@
-var axon = require('axon'),
+var axon = require('./lib/api').axon, // this should be 'irc-factory' in your project
 	incoming = axon.socket('pull'),
 	outgoing = axon.socket('pub-emitter');
 
