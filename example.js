@@ -1,19 +1,10 @@
-var axon = require('./lib/api').axon, // this should be 'irc-factory' in your project
-	incoming = axon.socket('pull'),
-	outgoing = axon.socket('pub-emitter');
+var factory = require('./lib/api'), // this should be 'irc-factory' in your project
+	axon = factory.axon,
+	api = new factory.Api();
 
-axon.codec.define('json', {
-	encode: JSON.stringify,
-	decode: JSON.parse
-});
-// setup a json codec
-
-incoming.connect(31920);
-incoming.format('json');
-// setup our incoming connection
-
-outgoing.connect(31930);
-// setup our outgoing connection
+var interfaces = api.connect({incoming: 31920, outgoing: 31930}),
+	outgoing = interfaces.outgoing,
+	incoming = interfaces.incoming;
 
 incoming.on('message', function(msg) {
 	if (msg.event == 'synchronize') {
