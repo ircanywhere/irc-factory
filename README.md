@@ -28,6 +28,24 @@ var client = api.createClient('unique-client-key', {
 });
 ```
 
+The following options are available, most of them are optional apart from the first 5, all the booleans default to false:
+```json
+{
+	"nick": "irc nickname",
+	"user": "irc username",
+	"realname": "irc realname",
+	"server": "the irc server to connect to",
+	"port": "the port to connect on",
+	"secure": "whether to use ssl",
+	"capab": "whether to start the negotiation with CAP LS, required for sasl",
+	"sasl": "whether to authenticate with sasl",
+	"saslUsername": "optional username to identify with, if omitted it will use the value in user",
+	"password": "if sasl is enabled this is the sasl password, if not it is a standard server password",
+	"retryCount": "how many times to retry connecting if disconnected, default is 10",
+	"retryWait": "how long to wait in ms between reconnects, default is 1000"
+}
+```
+
 This function returns an object which contains a key `irc` which is an instance of [Client](#client), we can use this to directly control the client.
 
 ### api.destroyClient(key)
