@@ -82,25 +82,16 @@ Events can be unhooked by sending the exact same parameters in as you did with h
 
 This is where the fun stuff happens, when we call this function it goes off in the background and forks and detaches itself. If you set `exit` to `true` it will close itself. If you choose `false` which you're probably going to want to do if you're including irc-factory in your project, when your process dies, your irc clients wont.
 
-So the interface for controlling clients is  a little different once we've forked, what happens when it's forked is two communication lines are fired up on ports `31920` and `31930`. An example of how to create a client and listen to events are is below;
+So the interface for controlling clients is a little different once we've forked, what happens when it's forked is two communication lines are fired up on ports `31920` and `31930`. An example of how to create a client and listen to events are is below;
 
 ```javascript
-var axon = require('irc-factory').axon,
-	incoming = axon.socket('pull'),
-	outgoing = axon.socket('pub-emitter');
+var factory = require('./lib/api'), // this should be 'irc-factory' in your project
+	axon = factory.axon,
+	api = new factory.Api();
 
-axon.codec.define('json', {
-	encode: JSON.stringify,
-	decode: JSON.parse
-});
-// setup a json codec
-
-incoming.connect(31920);
-incoming.format('json');
-// setup our incoming connection
-
-outgoing.connect(31930);
-// setup our outgoing connection
+var interfaces = api.connect({incoming: 31920, outgoing: 31930}),
+	outgoing = interfaces.outgoing,
+	incoming = interfaces.incoming;
 
 incoming.on('message', function(msg) {
 	if (msg.event == 'synchronize') {
