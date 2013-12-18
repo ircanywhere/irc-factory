@@ -124,7 +124,7 @@ describe('nick event', function () {
 	});
 });
 
-describe('topic numeric event', function () {
+describe('topic event', function () {
 	beforeEach(function() {
 		setTimeout(function() {
 			socket.connection.impl.rewrite(":sendak.freenode.net 332 testbot #ircanywhere :IRCAnywhere, moved to freenode. Development has restarted using meteor.js in 0.2.0 branch https://github.com/ircanywhere/ircanywhere/tree/0.2.0\r\n", 'utf-8');
@@ -162,7 +162,7 @@ describe('topic numeric event', function () {
 });
 
 
-describe('topic event', function () {
+describe('topic_change event', function () {
 	beforeEach(function() {
 		setTimeout(function() {
 			socket.connection.impl.rewrite(":rickibalboa!~ricki@unaffiliated/rickibalboa TOPIC #ircanywhere :IRCAnywhere, moved to freenode. Development has restarted using meteor.js in 0.2.0 branch https://github.com/ircanywhere/ircanywhere/tree/0.2.0\r\n", 'utf-8');
@@ -170,28 +170,28 @@ describe('topic event', function () {
 	});
 
 	it('topic event should have correct object format', function (done) {
-		Events.once('key.topic', function(o) {
+		Events.once('key.topic_change', function(o) {
 			o.should.have.properties('channel', 'topic', 'topicBy');
 			done();
 		});
 	});
 
 	it('channel should be correct', function (done) {
-		Events.once('key.topic', function(o) {
+		Events.once('key.topic_change', function(o) {
 			o.channel.should.equal('#ircanywhere');
 			done();
 		});
 	});
 
 	it('topic should be correct', function (done) {
-		Events.once('key.topic', function(o) {
+		Events.once('key.topic_change', function(o) {
 			o.topic.should.have.equal('IRCAnywhere, moved to freenode. Development has restarted using meteor.js in 0.2.0 branch https://github.com/ircanywhere/ircanywhere/tree/0.2.0');
 			done();
 		});
 	});
 
 	it('topic setter should be correct', function (done) {
-		Events.once('key.topic', function(o) {
+		Events.once('key.topic_change', function(o) {
 			o.topicBy.should.have.equal('rickibalboa!~ricki@unaffiliated/rickibalboa');
 			done();
 		});
@@ -391,19 +391,42 @@ describe('user mode event', function () {
 describe('mode event', function () {
 	beforeEach(function() {
 		setTimeout(function() {
-			socket.connection.impl.rewrite(":rickibalboa!~ricki@unaffiliated/rickibalboa MODE #ircanywhere-test +i\r\n", 'utf-8');
+			socket.connection.impl.rewrite(":rothfuss.freenode.net 324 testbot #ircanywhere-test +nst\r\n", 'utf-8');
 		}, 0);
 	});
 
 	it('mode object should have correct format', function (done) {
 		Events.once('key.mode', function(o) {
-			o.should.have.properties('nickname', 'username', 'hostname', 'channel', 'mode');
+			o.should.have.properties('channel', 'mode', 'time', 'raw');
 			done();
 		});
 	});
 
 	it('channel and mode should be correct', function (done) {
 		Events.once('key.mode', function(o) {
+			o.channel.should.equal('#ircanywhere-test');
+			o.mode.should.equal('+nst');
+			done();
+		});
+	});
+});
+
+describe('mode change event', function () {
+	beforeEach(function() {
+		setTimeout(function() {
+			socket.connection.impl.rewrite(":rickibalboa!~ricki@unaffiliated/rickibalboa MODE #ircanywhere-test +i\r\n", 'utf-8');
+		}, 0);
+	});
+
+	it('mode object should have correct format', function (done) {
+		Events.once('key.mode_change', function(o) {
+			o.should.have.properties('nickname', 'username', 'hostname', 'channel', 'mode');
+			done();
+		});
+	});
+
+	it('channel and mode should be correct', function (done) {
+		Events.once('key.mode_change', function(o) {
 			o.channel.should.equal('#ircanywhere-test');
 			o.nickname.should.equal('rickibalboa');
 			o.username.should.equal('~ricki');
