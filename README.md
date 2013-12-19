@@ -133,6 +133,30 @@ Client.raw('PRIVMSG #ircanywhere :hey there');
 Client.raw(['PRIVMSG', '#ircanywhere', 'hey there']);
 ```
 
+### Client.privmsg(target, message)
+
+Sends a message to a channel or a user, no need to write the : anywhere
+
+### Client.notice(target, message)
+
+Sends a notice to a target
+
+### Client.join(channel, [password])
+
+Joins a channel, you can supply an optional password
+
+### Client.part(channel, [message])
+
+Leaves a channel, you can also provide a part message
+
+### Client.mode(target, mode)
+
+Sets the mode on a target, you can set modes on yourself and channels, and if others if your ircd allows it and uses the same syntax
+
+### Client.topic(channel, topic)
+
+Set a channel's topic
+
 ### Client.me(target, message)
 
 This function lets us send a /me action to the specified target, being a channel or user.

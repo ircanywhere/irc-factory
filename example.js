@@ -6,7 +6,7 @@ var options = {
 		events: 31920,
 		rpc: 31930,
 		automaticSetup: true,
-		fork: true
+		fork: false
 	},
 	interfaces = api.connect(options),
 	events = interfaces.events,
@@ -23,7 +23,7 @@ events.on('message', function(msg) {
 	}
 
 	if (msg.event[0] == 'test' && msg.event[1] == 'motd') {
-		rpc.emit('call', 'test', 'raw', ['JOIN #ircanywhere-test']);
+		rpc.emit('call', 'test', 'join', ['#ircanywhere-test', 'a password']);
 	}
 
 	console.log(msg);
