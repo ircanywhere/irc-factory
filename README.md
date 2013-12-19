@@ -78,52 +78,26 @@ The above code would subscribe to the registered event which is sent out when 00
 
 Events can be unhooked by sending the exact same parameters in as you did with hookEvent, you can remove all events for that user by emitting the `callback` parameter.
 
-### api.fork([exit])
+### api.fork([exit], [options])
 
 This is where the fun stuff happens, when we call this function it goes off in the background and forks and detaches itself. If you set `exit` to `true` it will close itself. If you choose `false` which you're probably going to want to do if you're including irc-factory in your project, when your process dies, your irc clients wont.
 
-So the interface for controlling clients is a little different once we've forked, what happens when it's forked is two communication lines are fired up on ports `31920` and `31930`. An example of how to create a client and listen to events are is below;
+So the interface for controlling clients is a little different once we've forked, what happens when it's forked is two communication lines are fired up on ports `31920` and `31930`. An example of how to create a client and listen to events is in the [example.js](https://github.com/ircanywhere/irc-factory/blob/master/example.js) file. Options takes two parameters;
 
-```javascript
-var factory = require('./lib/api'), // this should be 'irc-factory' in your project
-	axon = factory.axon,
-	api = new factory.Api();
-
-var interfaces = api.connect({incoming: 31920, outgoing: 31930}),
-	outgoing = interfaces.outgoing,
-	incoming = interfaces.incoming;
-
-incoming.on('message', function(msg) {
-	if (msg.event == 'synchronize') {
-		if (msg.keys.length == 0) {
-			setTimeout(createClient, 1500);
-			// no client lets create one in 1.5 seconds
-		}
-		console.log(msg);
-		return;
-	}
-
-	if (msg.event[0] == 'test' && msg.event[1] == 'motd') {
-		outgoing.emit('call', 'test', 'raw', ['JOIN #ircanywhere-test']);
-	}
-
-	console.log(msg);
-});
-// handle incoming events, we don't use an event emitter because
-// of the fact we want queueing.
-
-function createClient() {
-	outgoing.emit('createClient', 'test', {
-		nick : 'simpleircbot',
-		user : 'testuser',
-		server : 'irc.freenode.net',
-		realname: 'realbot',
-		port: 6667,
-		secure: false
-	});
-};
-// create a client
+```json
+{
+	"incoming": 31920,
+	"outgoing": 31920
+}
 ```
+
+### api.setupServer([options])
+
+Alternatively, if you want to setup a multi-client relay server without forking the process but keeping the RPC interface. You can do so by calling this command directly, the difference between this and `fork()` is that all the IRC clients will die when your process dies, with `fork()` they will not.
+
+### api.connect([options])
+
+On your end-user you should be calling this function to connect to the relay and interact with your IRC clients. This function handles the connecting to the RPC server you created via either one of the above functions. You should handle your own socket errors like so in the [example.js](https://github.com/ircanywhere/irc-factory/blob/master/example.js) file so you can determine when to start up a server on a `ECONNREFUSED` code.
 
 The following commands are available to be sent down the pipe, they only take one command and it's the parameters sent as an object.
 

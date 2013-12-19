@@ -2,11 +2,23 @@ var factory = require('./lib/api'), // this should be 'irc-factory' in your proj
 	axon = factory.axon,
 	api = new factory.Api();
 
-var interfaces = api.connect({incoming: 31920, outgoing: 31930}),
-	outgoing = interfaces.outgoing,
-	incoming = interfaces.incoming;
+var options = {events: 31920, rpc: 31930},
+	interfaces = api.connect(options),
+	events = interfaces.events,
+	rpc = interfaces.rpc,
+	forked = false;
 
-incoming.on('message', function(msg) {
+events.on('socket error', function(e) {
+	console.log(e);
+	if (e.syscall === 'connect' && e.code === 'ECONNREFUSED' && !forked) {
+		api.fork(false, options);
+		// api.setupServer(options);
+		forked = true;
+	}
+});
+// socket error, host probably isn't setup, fork it
+
+events.on('message', function(msg) {
 	if (msg.event == 'synchronize') {
 		if (msg.keys.length == 0) {
 			setTimeout(createClient, 1500);
@@ -17,7 +29,7 @@ incoming.on('message', function(msg) {
 	}
 
 	if (msg.event[0] == 'test' && msg.event[1] == 'motd') {
-		outgoing.emit('call', 'test', 'raw', ['JOIN #ircanywhere-test']);
+		rpc.emit('call', 'test', 'raw', ['JOIN #ircanywhere-test']);
 	}
 
 	console.log(msg);
@@ -26,7 +38,7 @@ incoming.on('message', function(msg) {
 // of the fact we want queueing.
 
 function createClient() {
-	outgoing.emit('createClient', 'test', {
+	rpc.emit('createClient', 'test', {
 		nick : 'simpleircbot',
 		user : 'testuser',
 		server : 'irc.freenode.net',
