@@ -82,14 +82,7 @@ Events can be unhooked by sending the exact same parameters in as you did with h
 
 This is where the fun stuff happens, when we call this function it goes off in the background and forks and detaches itself. If you set `exit` to `true` it will close itself. If you choose `false` which you're probably going to want to do if you're including irc-factory in your project, when your process dies, your irc clients wont.
 
-So the interface for controlling clients is a little different once we've forked, what happens when it's forked is two communication lines are fired up on ports `31920` and `31930`. An example of how to create a client and listen to events is in the [example.js](https://github.com/ircanywhere/irc-factory/blob/master/example.js) file. Options takes two parameters;
-
-```json
-{
-	"incoming": 31920,
-	"outgoing": 31920
-}
-```
+So the interface for controlling clients is a little different once we've forked, what happens when it's forked is two communication lines are fired up on ports `31920` and `31930`. An example of how to create a client and listen to events is in the [example.js](https://github.com/ircanywhere/irc-factory/blob/master/example.js) file.
 
 ### api.setupServer([options])
 
@@ -97,7 +90,20 @@ Alternatively, if you want to setup a multi-client relay server without forking 
 
 ### api.connect([options])
 
-On your end-user you should be calling this function to connect to the relay and interact with your IRC clients. This function handles the connecting to the RPC server you created via either one of the above functions. You should handle your own socket errors like so in the [example.js](https://github.com/ircanywhere/irc-factory/blob/master/example.js) file so you can determine when to start up a server on a `ECONNREFUSED` code.
+On your end-user you should be calling this function to connect to the relay and interact with your IRC clients. This function handles the connecting to the RPC server you created via either one of the above functions. You can handle your own socket errors to determine whether to start a server on a `ECONNREFUSED` code.
+
+Alternatively, you can automatically setup the RPC server on `api.connect()` by setting `options.handleErrors = true`. This will setup a server on it's own when it cannot connect. The `options.fork` boolean will determine whether to setup the server with `fork()` or `setupServer()`. Note that you will want to set that value to `true` if you want to take advantage of persistant clients. An example of this is at [example.js](https://github.com/ircanywhere/irc-factory/blob/master/example.js).
+
+Options takes two parameters;
+
+```json
+{
+	"events": 31920,
+	"rpc": 31930,
+	"automaticSetup": true,
+	"fork": true
+}
+```
 
 The following commands are available to be sent down the pipe, they only take one command and it's the parameters sent as an object.
 

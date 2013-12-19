@@ -2,21 +2,15 @@ var factory = require('./lib/api'), // this should be 'irc-factory' in your proj
 	axon = factory.axon,
 	api = new factory.Api();
 
-var options = {events: 31920, rpc: 31930},
+var options = {
+		events: 31920,
+		rpc: 31930,
+		automaticSetup: true,
+		fork: true
+	},
 	interfaces = api.connect(options),
 	events = interfaces.events,
-	rpc = interfaces.rpc,
-	forked = false;
-
-events.on('socket error', function(e) {
-	console.log(e);
-	if (e.syscall === 'connect' && e.code === 'ECONNREFUSED' && !forked) {
-		api.fork(false, options);
-		// api.setupServer(options);
-		forked = true;
-	}
-});
-// socket error, host probably isn't setup, fork it
+	rpc = interfaces.rpc;
 
 events.on('message', function(msg) {
 	if (msg.event == 'synchronize') {
