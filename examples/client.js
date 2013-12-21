@@ -16,4 +16,5 @@ api.hookEvent('test', '*', function(message) {
 
 api.hookEvent('test', 'registered', function(message) {
 	client.irc.join('#ircanywhere-test');
+	client.irc.mode('#ircanywhere-test', '-n');
 });
