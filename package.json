@@ -11,8 +11,7 @@
   ],
   "devDependencies": {
     "mocha": "1.15.1",
-    "should": "2.1.0",
-    "sinon": "1.7.3"
+    "should": "2.1.0"
   },
   "dependencies": {
     "eventemitter2": "0.4.13",
