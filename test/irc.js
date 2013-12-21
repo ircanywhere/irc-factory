@@ -365,6 +365,32 @@ describe('list event', function () {
 	});
 });
 
+describe('banlist event', function () {
+	beforeEach(function() {
+		setTimeout(function() {
+			socket.connection.impl.rewrite(":leguin.freenode.net 367 rickibalboa #ircanywhere *!*@91.210.* rickibalboa!~ricki@unaffiliated/rickibalboa 1387220316:\r\n", 'utf-8');
+			socket.connection.impl.rewrite(":leguin.freenode.net 368 rickibalboa #ircanywhere :End of Channel Ban List\r\n", 'utf-8');
+		}, 0);
+	});
+
+	it('banlist object should have correct format', function (done) {
+		Events.once('key.banlist', function(o) {
+			o.should.have.properties('banlist');
+			done();
+		});
+	});
+
+	it('banlist object should be correct', function (done) {
+		Events.once('key.banlist', function(o) {
+			o.banlist.should.have.a.lengthOf(1);
+			o.banlist[0].channel.should.equal('#ircanywhere');
+			o.banlist[0].setby.should.equal('rickibalboa!~ricki@unaffiliated/rickibalboa');
+			o.banlist[0].hostname.should.equal('*!*@91.210.*');
+			done();
+		});
+	});
+});
+
 describe('user mode event', function () {
 	beforeEach(function() {
 		setTimeout(function() {

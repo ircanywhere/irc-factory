@@ -1,4 +1,4 @@
-var factory = require('./lib/api'), // this should be 'irc-factory' in your project
+var factory = require('../lib/api'), // this should be 'irc-factory' in your project
 	axon = factory.axon,
 	api = new factory.Api();
 
@@ -6,7 +6,7 @@ var options = {
 		events: 31920,
 		rpc: 31930,
 		automaticSetup: true,
-		fork: false
+		fork: true
 	},
 	interfaces = api.connect(options),
 	events = interfaces.events,
@@ -18,12 +18,11 @@ events.on('message', function(msg) {
 			setTimeout(createClient, 1500);
 			// no client lets create one in 1.5 seconds
 		}
-		console.log(msg);
 		return;
 	}
 
-	if (msg.event[0] == 'test' && msg.event[1] == 'motd') {
-		rpc.emit('call', 'test', 'join', ['#ircanywhere-test', 'a password']);
+	if (msg.event[0] == 'test' && msg.event[1] == 'registered') {
+		rpc.emit('call', 'test', 'join', ['#ircanywhere-test']);
 	}
 
 	console.log(msg);
