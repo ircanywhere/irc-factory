@@ -23,6 +23,7 @@ events.on('message', function(msg) {
 
 	if (msg.event[0] == 'test' && msg.event[1] == 'registered') {
 		rpc.emit('call', 'test', 'join', ['#ircanywhere-test']);
+		rpc.emit('call', 'test', 'privmsg', ['#ircanywhere-test', 'hey this is a test']);
 	}
 
 	console.log(msg);
