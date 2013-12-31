@@ -18,7 +18,7 @@
     "irc-message": "1.0.0",
     "irc-socket": "2.1.0",
     "axon": "1.0.0",
-    "underscore": "1.5.2"
+    "lodash": "2.4.1"
   },
   "keywords": [
     "irc",
