@@ -8,12 +8,12 @@ describe('api.createClient() tests', function () {
 
 	before(function() {
 		client = api.createClient('key', {
-		    nick : 'testbot',
-		    user : 'testuser',
-		    server : 'irc.freenode.net',
-		    realname: 'realbot',
-		    port: 6667,
-		    secure: false
+			nick : 'testbot',
+			user : 'testuser',
+			server : 'irc.freenode.net',
+			realname: 'realbot',
+			port: 6667,
+			secure: false
 		}, true);
 	});
 
@@ -62,12 +62,12 @@ describe('api.destroyClient() tests', function() {
 
 	before(function() {
 		client = api.createClient('key', {
-		    nick : 'testbot',
-		    user : 'testuser',
-		    server : 'irc.freenode.net',
-		    realname: 'realbot',
-		    port: 6667,
-		    secure: false
+			nick : 'testbot',
+			user : 'testuser',
+			server : 'irc.freenode.net',
+			realname: 'realbot',
+			port: 6667,
+			secure: false
 		}, true);
 	});
 

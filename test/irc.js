@@ -5,12 +5,12 @@ var should = require('should'),
 	Client = irc.Client;
 
 var network = Object.freeze({
-    nick : 'testbot',
-    user : 'testuser',
-    server : 'irc.freenode.net',
-    realname: 'realbot',
-    port: 6667,
-    secure: false
+	nick : 'testbot',
+	user : 'testuser',
+	server : 'irc.freenode.net',
+	realname: 'realbot',
+	port: 6667,
+	secure: false
 });
 
 var socket = new Client('key', network, readWriteStream);
