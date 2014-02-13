@@ -348,7 +348,7 @@ describe('list event', function () {
 
 	it('list object should have correct format', function (done) {
 		Events.once('key.list', function(o) {
-			o.should.have.properties('list');
+			o.should.have.property('list');
 			done();
 		});
 	});
