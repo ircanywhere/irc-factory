@@ -161,7 +161,6 @@ describe('topic event', function () {
 	});
 });
 
-
 describe('topic_change event', function () {
 	beforeEach(function() {
 		setTimeout(function() {
