@@ -1,4 +1,5 @@
 var should = require('should'),
+	sinon = require('sinon'),
 	readWriteStream = require('../lib/stub.js').ReadWriteNetStream,
 	irc = require('../lib/irc.js'),
 	Events = irc.Events,
@@ -13,7 +14,8 @@ var network = Object.freeze({
 	secure: false
 });
 
-var socket = new Client('key', network, readWriteStream);
+var socket = new Client('key', network, readWriteStream),
+	spy = sinon.spy(socket, 'raw');
 
 describe('registered event', function () {
 	beforeEach(function() {
@@ -694,7 +696,7 @@ describe('notice event', function () {
 describe('action event', function () {
 	beforeEach(function() {
 		setTimeout(function() {
-			socket.connection.impl.rewrite(":rickibalboa!~ricki@unaffiliated/rickibalboa PRIVMSG #ircanywhere-test :+ACTION hey just an action test here\r\n", 'utf-8');
+			socket.connection.impl.rewrite(":rickibalboa!~ricki@unaffiliated/rickibalboa PRIVMSG #ircanywhere-test :+\x01ACTION hey just an action test here\x01\r\n", 'utf-8');
 		}, 0);
 	});
 
@@ -720,7 +722,7 @@ describe('action event', function () {
 describe('ctcp request event', function () {
 	beforeEach(function() {
 		setTimeout(function() {
-			socket.connection.impl.rewrite(":rickibalboa!~ricki@unaffiliated/rickibalboa PRIVMSG testbot :+VERSION\r\n", 'utf-8');
+			socket.connection.impl.rewrite(":rickibalboa!~ricki@unaffiliated/rickibalboa PRIVMSG testbot :+\x01VERSION\x01\r\n", 'utf-8');
 		}, 0);
 	});
 
@@ -746,7 +748,7 @@ describe('ctcp request event', function () {
 describe('ctcp response event', function () {
 	beforeEach(function() {
 		setTimeout(function() {
-			socket.connection.impl.rewrite(":rickibalboa!~ricki@unaffiliated/rickibalboa NOTICE testbot :VERSION HexChat 2.9.5 [x64] / Windows 8 [3.43GHz]\r\n", 'utf-8');
+			socket.connection.impl.rewrite(":rickibalboa!~ricki@unaffiliated/rickibalboa NOTICE testbot :\x01VERSION HexChat 2.9.5 [x64] / Windows 8 [3.43GHz]\x01\r\n", 'utf-8');
 		}, 0);
 	});
 
@@ -767,5 +769,37 @@ describe('ctcp response event', function () {
 			o.message.should.equal('HexChat 2.9.5 [x64] / Windows 8 [3.43GHz]');
 			done();
 		});
+	});
+});
+
+describe('colour privmsg', function () {
+	beforeEach(function() {
+		socket.privmsg('#test', 'hey this is a ^9test');
+	});
+
+	it('privmsg should be coloured correctly', function (done) {
+		spy.args.length.should.equal(1);
+		spy.calledOnce.should.equal(true);
+		spy.calledWith(['PRIVMSG', '#test', 'hey this is a \x039test']).should.equal(true);
+		spy.reset();
+		done();
+	});
+});
+
+describe('privmsg truncate', function () {
+	beforeEach(function() {
+		socket.privmsg('#test', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur nec volutpat felis. Proin bibendum massa eu enim volutpat sollicitudin. Fusce id vulputate augue. Donec ut nulla vel sapien imperdiet ullamcorper. Donec dignissim nulla pulvinar lobortis pretium. Phasellus auctor vehicula nisl, quis vestibulum erat vehicula id. Proin eleifend ipsum vel massa varius varius a malesuada justo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur nec volutpat felis. Proin bibendum massa eu enim volutpat sollicitudin. Fusce id vulputate augue. Donec ut nulla vel sapien imperdiet ullamcorper. Donec dignissim nulla pulvinar lobortis pretium. Phasellus auctor vehicula nisl, quis vestibulum erat vehicula id. Proin eleifend ipsum vel massa varius varius a malesuada justo.', true);
+	});
+
+	it('privmsg should be truncated correctly', function (done) {
+		spy.args.length.should.equal(2);
+		spy.calledOnce.should.equal(false);
+		spy.calledWith(['PRIVMSG', '#test', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur nec volutpat felis. Proin bibendum massa eu enim volutpat sollicitudin. Fusce id vulputate augue. Donec ut nulla vel sapien imperdiet ullamcorper. Donec dignissim nulla pulvinar lobortis pretium. Phasellus auctor vehicula nisl, quis vestibulum erat vehicula id. Proin eleifend ipsum vel massa varius varius a malesuada justo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur nec volutpat felis. Proin bibendum']).should.equal(true);
+		// first
+
+		spy.calledWith(['PRIVMSG', '#test', 'massa eu enim volutpat sollicitudin. Fusce id vulputate augue. Donec ut nulla vel sapien imperdiet ullamcorper. Donec dignissim nulla pulvinar lobortis pretium. Phasellus auctor vehicula nisl, quis vestibulum erat vehicula id. Proin eleifend ipsum vel massa varius varius a malesuada justo.']).should.equal(true);
+		// second
+		
+		done();
 	});
 });
