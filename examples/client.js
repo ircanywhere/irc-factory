@@ -16,6 +16,11 @@ api.hookEvent('test', '*', function(message) {
 
 api.hookEvent('test', 'registered', function(message) {
 	client.irc.join('#ircanywhere-test');
-	//client.irc.privmsg('#ircanywhere-test', 'hey this is ^9a test');
-	//client.irc.list();
+	//client.irc.privmsg('#ircanywhere-test', '^5hey this is ^2a test');
+	client.irc.list('*php*', 2, 10);
+
+	setTimeout(function() {
+		console.log('requesting list again');
+		client.irc.list('*php*', 3, 10);
+	}, 60000);
 });
