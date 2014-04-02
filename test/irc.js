@@ -342,7 +342,7 @@ describe('list event', function () {
 	beforeEach(function() {
 		setTimeout(function() {
 			socket.connection.impl.rewrite(":leguin.freenode.net 322 testbot #puppet 1058 :Puppet Enterprise 3.1.0: http://bit.ly/PE_31 | Puppet 3.3.2: http://bit.ly/QUjTW0 |  Help: http://{ask,docs}.puppetlabs.com | Bugs & Feature Requests: http://bit.ly/aoNNEP\r\n", 'utf-8');
-			socket.connection.impl.rewrite(":leguin.freenode.net 322 testbot ##linux 1368 : Welcome to ##Linux! Freenode's general Linux support/discussion channel. | Channel website and rules: http://www.linuxassist.net | Our pastebin http://paste.linuxassist.net | Spammers or trolls? use !ops <troll's nick> <reason>\". | For op assistance, join ##linux-ops. Feel at home and enjoy your stay.\r\n", 'utf-8');
+			socket.connection.impl.rewrite(":leguin.freenode.net 322 testbot ##linux 1368 :Welcome to ##Linux! Freenode's general Linux support/discussion channel. | Channel website and rules: http://www.linuxassist.net | Our pastebin http://paste.linuxassist.net | Spammers or trolls? use !ops <troll's nick> <reason>\". | For op assistance, join ##linux-ops. Feel at home and enjoy your stay.\r\n", 'utf-8');
 			socket.connection.impl.rewrite(":leguin.freenode.net 322 testbot #git 1082 :Welcome to #git, the place for git-related help and tomato soup | Current stable version: 1.8.5.1 | Start here: http://jk.gs/git | Seeing \"Cannot send to channel\" or unable to change nick? /msg gitinfo .voice | git-hg: Don\'t you know that\'s poison?\r\n", 'utf-8');
 			socket.connection.impl.rewrite(":leguin.freenode.net 323 testbot :End of /LIST\r\n", 'utf-8');
 		}, 0);
@@ -353,16 +353,20 @@ describe('list event', function () {
 			o.should.have.property('list');
 			done();
 		});
+		socket.list('*', 1, 3);
+		spy.reset();
 	});
 
 	it('list object should be correct', function (done) {
 		Events.once('key.list', function(o) {
 			o.list.should.have.a.lengthOf(3);
-			o.list[0].channel.should.equal('#puppet');
-			o.list[0].users.should.equal('1058');
-			o.list[0].topic.should.equal('Puppet Enterprise 3.1.0: http://bit.ly/PE_31 | Puppet 3.3.2: http://bit.ly/QUjTW0 |  Help: http://{ask,docs}.puppetlabs.com | Bugs & Feature Requests: http://bit.ly/aoNNEP');
+			o.list[0].channel.should.equal('##linux');
+			o.list[0].users.should.equal('1368');
+			o.list[0].topic.should.equal('Welcome to ##Linux! Freenode\'s general Linux support/discussion channel. | Channel website and rules: http://www.linuxassist.net | Our pastebin http://paste.linuxassist.net | Spammers or trolls? use !ops <troll\'s nick> <reason>\". | For op assistance, join ##linux-ops. Feel at home and enjoy your stay.');
 			done();
 		});
+		socket.list('*', 1, 3);
+		spy.reset();
 	});
 });
 

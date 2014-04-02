@@ -11,10 +11,10 @@ var client = api.createClient('test', {
 });
 
 api.hookEvent('test', '*', function(message) {
-	console.log(message);
+	console.log(this.event, message);
 });
 
 api.hookEvent('test', 'registered', function(message) {
 	client.irc.join('#ircanywhere-test');
-	//client.irc.privmsg('#ircanywhere-test', 'hey this is a test');
+	client.irc.privmsg('#ircanywhere-test', 'hey this is a test');
 });

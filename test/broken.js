@@ -1,4 +1,5 @@
 var should = require('should'),
+	sinon = require('sinon'),
 	readWriteStream = require('../lib/stub.js').ReadWriteNetStream,
 	irc = require('../lib/irc.js'),
 	Events = irc.Events,
@@ -26,7 +27,8 @@ var network = Object.freeze({
 	secure: false
 });
 
-var socket = new Client('key', network, readWriteStream);
+var socket = new Client('bkey', network, readWriteStream),
+	spy = sinon.spy(socket, 'raw');
 
 describe('registered event', function () {
 	beforeEach(function() {
@@ -39,7 +41,7 @@ describe('registered event', function () {
 	});
 
 	it('registered event should have correct object format', function (done) {
-		Events.once('key.registered', function(o) {
+		Events.once('bkey.registered', function(o) {
 			o.should.have.properties('nickname', 'capabilities', 'time', 'raw');
 			o.capabilities.should.have.properties('network', 'channel', 'modes');
 			o.capabilities.network.should.have.properties('name', 'hostname', 'ircd', 'nicklength', 'maxtargets');
@@ -50,7 +52,7 @@ describe('registered event', function () {
 	});
 
 	it('registered event should have correct network object', function (done) {
-		Events.once('key.registered', function(o) {
+		Events.once('bkey.registered', function(o) {
 			o.capabilities.network.name.should.equal('freenode');
 			o.capabilities.network.hostname.should.equal('sendak.freenode.net');
 			o.capabilities.network.ircd.should.equal('ircd-seven-1.1.3');
@@ -61,7 +63,7 @@ describe('registered event', function () {
 	});
 
 	it('registered event should have correct channel object', function (done) {
-		Events.once('key.registered', function(o) {
+		Events.once('bkey.registered', function(o) {
 			o.capabilities.channel.idlength.should.be.empty;
 			o.capabilities.channel.limit.should.eql({'#': 120});
 			o.capabilities.channel.length.should.equal(200);
@@ -74,7 +76,7 @@ describe('registered event', function () {
 	});
 
 	it('registered event should have correct modes object', function (done) {
-		Events.once('key.registered', function(o) {
+		Events.once('bkey.registered', function(o) {
 			o.capabilities.modes.user.should.equal('DOQRSZaghilopswz');
 			o.capabilities.modes.channel.should.equal('CFILMPQSbcefgijklmnopqrstvz');
 			o.capabilities.modes.param.should.equal('bkloveqjfI');
@@ -101,7 +103,7 @@ describe('motd event', function () {
 	});
 
 	it('motd should be correct', function (done) {
-		Events.once('key.motd', function(o) {
+		Events.once('bkey.motd', function(o) {
 			o.motd.should.eql(['- Welcome to moorcock.freenode.net in Texas, USA. Thanks to',
 				'- Kodingen (http://kodingen.com) for sponsoring this server!',
 				'End of /MOTD command.']);
@@ -118,14 +120,14 @@ describe('nick event', function () {
 	});
 
 	it('nick event should have correct object format', function (done) {
-		Events.once('key.nick', function(o) {
+		Events.once('bkey.nick', function(o) {
 			o.should.have.properties('nickname', 'username', 'hostname', 'newnick', 'time');
 			done();
 		});
 	});
 
 	it('new nickname should be correct', function (done) {
-		Events.once('key.nick', function(o) {
+		Events.once('bkey.nick', function(o) {
 			o.newnick.should.be.empty;
 			done();
 		});
@@ -141,28 +143,28 @@ describe('topic event', function () {
 	});
 
 	it('topic event should have correct object format', function (done) {
-		Events.once('key.topic', function(o) {
+		Events.once('bkey.topic', function(o) {
 			o.should.have.properties('channel', 'topicBy');
 			done();
 		});
 	});
 
 	it('channel should be correct', function (done) {
-		Events.once('key.topic', function(o) {
+		Events.once('bkey.topic', function(o) {
 			o.channel.should.equal('#ircanywhere');
 			done();
 		});
 	});
 
 	it('topic should be correct', function (done) {
-		Events.once('key.topic', function(o) {
+		Events.once('bkey.topic', function(o) {
 			o.should.not.have.property('topic');
 			done();
 		});
 	});
 
 	it('topic setter should be correct', function (done) {
-		Events.once('key.topic', function(o) {
+		Events.once('bkey.topic', function(o) {
 			o.topicBy.should.have.equal('rick;3');
 			done();
 		});
@@ -177,28 +179,28 @@ describe('topic_change event', function () {
 	});
 
 	it('topic event should have correct object format', function (done) {
-		Events.once('key.topic_change', function(o) {
+		Events.once('bkey.topic_change', function(o) {
 			o.should.have.properties('channel', 'topicBy');
 			done();
 		});
 	});
 
 	it('channel should be correct', function (done) {
-		Events.once('key.topic_change', function(o) {
+		Events.once('bkey.topic_change', function(o) {
 			o.channel.should.equal('#ir/\';canywhere');
 			done();
 		});
 	});
 
 	it('topic should be correct', function (done) {
-		Events.once('key.topic_change', function(o) {
+		Events.once('bkey.topic_change', function(o) {
 			o.should.not.have.property('topic');
 			done();
 		});
 	});
 
 	it('topic setter should be correct', function (done) {
-		Events.once('key.topic_change', function(o) {
+		Events.once('bkey.topic_change', function(o) {
 			o.topicBy.should.have.equal('undefined!undefined@undefined');
 			// because rickibalboa~ricki@unaffiliated/rickibalboa cannot be parsed properly!
 			done();
@@ -215,14 +217,14 @@ describe('names event', function () {
 	});
 
 	it('names event should have correct object format', function (done) {
-		Events.once('key.names', function(o) {
+		Events.once('bkey.names', function(o) {
 			o.should.equal(false);
 			done();
 		});
 	});
 
 	it('channel should be correct', function (done) {
-		Events.once('key.names', function(o) {
+		Events.once('bkey.names', function(o) {
 			o.should.not.have.properties('channel', 'names');
 			done();
 		});
@@ -241,21 +243,21 @@ describe('who event', function () {
 	});
 
 	it('who event should have correct object format', function (done) {
-		Events.once('key.who', function(o) {
+		Events.once('bkey.who', function(o) {
 			o.should.have.properties('channel', 'who');
 			done();
 		});
 	});
 
 	it('channel should be correct', function (done) {
-		Events.once('key.who', function(o) {
+		Events.once('bkey.who', function(o) {
 			o.channel.should.equal('#ircanywhere');
 			done();
 		});
 	});
 
 	it('who array should be correct', function (done) {
-		Events.once('key.who', function(o) {
+		Events.once('bkey.who', function(o) {
 			o.who.should.have.a.lengthOf(4);
 			o.who[0].channel.should.equal('#ircanywhere');
 			o.who[0].prefix.should.equal('~testuser@sendak.freenode.net');
@@ -280,7 +282,7 @@ describe('whois event', function () {
 	});
 
 	it('whois event should have correct object format', function (done) {
-		Events.once('key.whois', function(o) {
+		Events.once('bkey.whois', function(o) {
 			o.should.have.properties('nickname', 'username', 'hostname', 'channels', 'server');
 			o.should.not.have.property('realname');
 			done();
@@ -288,7 +290,7 @@ describe('whois event', function () {
 	});
 
 	it('whois object should be correct', function (done) {
-		Events.once('key.whois', function(o) {
+		Events.once('bkey.whois', function(o) {
 			o.nickname.should.equal('rickibalboa');
 			o.username.should.equal('~ricki');
 			o.hostname.should.equal('Ricki');
@@ -309,14 +311,14 @@ describe('links event', function () {
 	});
 
 	it('links object should have correct format', function (done) {
-		Events.once('key.links', function(o) {
+		Events.once('bkey.links', function(o) {
 			o.should.have.properties('links');
 			done();
 		});
 	});
 
 	it('values should be correct', function (done) {
-		Events.once('key.links', function(o) {
+		Events.once('bkey.links', function(o) {
 			o.links.should.have.a.lengthOf(2);
 			o.links[0].server.should.equal('services.');
 			o.links[0].link.should.equal('IRC');
@@ -337,20 +339,23 @@ describe('list event', function () {
 	});
 
 	it('list object should have correct format', function (done) {
-		Events.once('key.list', function(o) {
+		Events.once('bkey.list', function(o) {
 			o.should.have.property('list');
 			done();
 		});
+		socket.list('*', 1, 3);
+		spy.reset();
 	});
 
 	it('list object should be correct', function (done) {
-		Events.once('key.list', function(o) {
+		Events.once('bkey.list', function(o) {
 			o.list.should.have.a.lengthOf(3);
 			o.list[0].channel.should.equal('#puppet');
 			o.list[0].users.should.equal('1058');
-			o.list[0].should.not.have.property('topic');
 			done();
 		});
+		socket.list('*', 1, 3);
+		spy.reset();
 	});
 });
 
@@ -363,14 +368,14 @@ describe('banlist event', function () {
 	});
 
 	it('banlist object should have correct format', function (done) {
-		Events.once('key.banlist', function(o) {
+		Events.once('bkey.banlist', function(o) {
 			o.should.have.properties('banlist');
 			done();
 		});
 	});
 
 	it('banlist object should be correct', function (done) {
-		Events.once('key.banlist', function(o) {
+		Events.once('bkey.banlist', function(o) {
 			o.banlist.should.have.a.lengthOf(1);
 			o.banlist[0].channel.should.equal('#ircanywhere');
 			o.banlist[0].setby.should.equal('');
@@ -389,14 +394,14 @@ describe('user mode event', function () {
 	});
 
 	it('mode object should have correct format', function (done) {
-		Events.once('key.usermode', function(o) {
+		Events.once('bkey.usermode', function(o) {
 			o.should.have.properties('nickname', 'mode');
 			done();
 		});
 	});
 
 	it('nick and mode should be correct', function (done) {
-		Events.once('key.usermode', function(o) {
+		Events.once('bkey.usermode', function(o) {
 			o.nickname.should.equal('testbot');
 			o.mode.should.be.empty;
 			done();
@@ -412,14 +417,14 @@ describe('mode event', function () {
 	});
 
 	it('mode object should have correct format', function (done) {
-		Events.once('key.mode', function(o) {
+		Events.once('bkey.mode', function(o) {
 			o.should.have.properties('channel', 'mode', 'time', 'raw');
 			done();
 		});
 	});
 
 	it('channel and mode should be correct', function (done) {
-		Events.once('key.mode', function(o) {
+		Events.once('bkey.mode', function(o) {
 			o.channel.should.equal('\'#ircanywhere-test');
 			o.mode.should.equal('+nst');
 			done();
@@ -435,7 +440,7 @@ describe('mode change event', function () {
 	});
 
 	it('mode object should have correct format', function (done) {
-		Events.once('key.mode_change', function(o) {
+		Events.once('bkey.mode_change', function(o) {
 			o.should.have.properties('channel', 'mode');
 			o.should.not.have.properties('nickname', 'username', 'hostname');
 			done();
@@ -443,7 +448,7 @@ describe('mode change event', function () {
 	});
 
 	it('channel and mode should be correct', function (done) {
-		Events.once('key.mode_change', function(o) {
+		Events.once('bkey.mode_change', function(o) {
 			o.channel.should.equal('#ircanywhere#-test');
 			o.mode.should.equal('+\'i');
 			done();
@@ -459,14 +464,14 @@ describe('join event', function () {
 	});
 
 	it('join object should have correct format', function (done) {
-		Events.once('key.join', function(o) {
+		Events.once('bkey.join', function(o) {
 			o.should.have.properties('username', 'hostname', 'nickname');
 			done();
 		});
 	});
 
 	it('values should be correct', function (done) {
-		Events.once('key.join', function(o) {
+		Events.once('bkey.join', function(o) {
 			o.nickname.should.equal('rickibalboa');
 			o.username.should.equal('~ricki');
 			o.hostname.should.equal('unaffiliated/rickibalboa');
@@ -483,7 +488,7 @@ describe('part event', function () {
 	});
 
 	it('part object should have correct format', function (done) {
-		Events.once('key.part', function(o) {
+		Events.once('bkey.part', function(o) {
 			o.should.have.properties('channel');
 			o.should.not.have.properties('username', 'hostname', 'nickname');
 			done();
@@ -491,7 +496,7 @@ describe('part event', function () {
 	});
 
 	it('channel and nick should be correct', function (done) {
-		Events.once('key.part', function(o) {
+		Events.once('bkey.part', function(o) {
 			o.channel.should.equal('#ircanywhere-test');
 			done();
 		});
@@ -506,14 +511,14 @@ describe('kick event', function () {
 	});
 
 	it('kick object should have correct format', function (done) {
-		Events.once('key.kick', function(o) {
+		Events.once('bkey.kick', function(o) {
 			o.should.have.properties('channel', 'username', 'hostname', 'nickname');
 			done();
 		});
 	});
 
 	it('values should be correct', function (done) {
-		Events.once('key.kick', function(o) {
+		Events.once('bkey.kick', function(o) {
 			o.nickname.should.equal('rickibalboa');
 			o.username.should.equal('~ricki');
 			o.hostname.should.equal('unaffiliated/rickibalboa');
@@ -531,7 +536,7 @@ describe('quit event', function () {
 	});
 
 	it('quit object should have correct format', function (done) {
-		Events.once('key.quit', function(o) {
+		Events.once('bkey.quit', function(o) {
 			o.should.have.properties('message');
 			o.should.not.have.properties('username', 'hostname', 'nickname');
 			done();
@@ -539,7 +544,7 @@ describe('quit event', function () {
 	});
 
 	it('values should be correct', function (done) {
-		Events.once('key.quit', function(o) {
+		Events.once('bkey.quit', function(o) {
 			o.message.should.be.empty;
 			done();
 		});
@@ -554,7 +559,7 @@ describe('invite event', function () {
 	});
 
 	it('invite object should have correct format', function (done) {
-		Events.once('key.invite', function(o) {
+		Events.once('bkey.invite', function(o) {
 			o.should.have.properties('nickname', 'username', 'hostname');
 			o.should.not.have.properties('channel');
 			done();
@@ -562,7 +567,7 @@ describe('invite event', function () {
 	});
 
 	it('values should be correct', function (done) {
-		Events.once('key.invite', function(o) {
+		Events.once('bkey.invite', function(o) {
 			o.nickname.should.equal('rickibalboa');
 			o.username.should.equal('~ricki');
 			o.hostname.should.equal('unaffiliated/rickibalboa');
@@ -580,14 +585,14 @@ describe('away/unaway event as per away-notify', function () {
 	});
 
 	it('unaway object should have correct format', function (done) {
-		Events.once('key.unaway', function(o) {
+		Events.once('bkey.unaway', function(o) {
 			o.should.not.have.properties('nickname', 'username', 'hostname', 'message');
 			done();
 		});
 	});
 
 	it('unaway values should be correct', function (done) {
-		Events.once('key.unaway', function(o) {
+		Events.once('bkey.unaway', function(o) {
 			o.nickname.should.equal('rickibalboa');
 			o.username.should.equal('~ricki');
 			o.hostname.should.equal('unaffiliated/rickibalboa');
@@ -596,17 +601,16 @@ describe('away/unaway event as per away-notify', function () {
 	});
 
 	it('away object should have correct format', function (done) {
-		Events.once('key.away', function(o) {
+		Events.once('bkey.away', function(o) {
 			o.should.have.properties('message');
 			done();
 		});
 	});
 
 	it('away values should be correct', function (done) {
-		Events.once('key.away', function(o) {
+		Events.once('bkey.away', function(o) {
 			o.message.should.equal('hi');
 			done();
 		});
 	});
 });
-
