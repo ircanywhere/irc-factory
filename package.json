@@ -17,7 +17,7 @@
   "dependencies": {
     "eventemitter2": "0.4.13",
     "irc-message": "1.0.0",
-    "irc-socket": "2.2.1",
+    "irc-socket": "2.2.2",
     "axon": "1.0.0",
     "lodash": "2.4.1",
     "pause-queue": "~0.1.0"
