@@ -804,6 +804,26 @@ describe('privmsg truncate', function () {
 		spy.calledWith(['PRIVMSG', '#test', 'massa eu enim volutpat sollicitudin. Fusce id vulputate augue. Donec ut nulla vel sapien imperdiet ullamcorper. Donec dignissim nulla pulvinar lobortis pretium. Phasellus auctor vehicula nisl, quis vestibulum erat vehicula id. Proin eleifend ipsum vel massa varius varius a malesuada justo.']).should.equal(true);
 		// second
 		
+		spy.reset();
+		done();
+	});
+});
+
+describe('privmsg truncate unicode', function () {
+	beforeEach(function() {
+		socket.privmsg('#test', 'Ｙｏｕｒ  ｂｏｎｅｓ  ｄｏｎ＇ｔ  ｂｒｅａｋ，  ｍｉｎｅ  ｄｏ．  Ｔｈａｔ＇ｓ  ｃｌｅａｒ．  Ｙｏｕｒ  ｃｅｌｌｓ  ｒｅａｃｔ  ｔｏ  ｂａｃｔｅｒｉａ  ａｎｄ  ｖｉｒｕｓｅｓ  ｄｉｆｆｅｒｅｎｔｌｙ  ｔｈａｎ  ｍｉｎｅ．  Ｙｏｕ  ｄｏｎ＇ｔ  ｇｅｔ  ｓｉｃｋ，  Ｉ  ｄｏ．  Ｔｈａｔ＇ｓ  ａｌｓｏ  ｃｌｅａｒ．  Ｂｕｔ  ｆｏｒ  ｓｏｍｅ  ｒｅａｓｏｎ，  ｙｏｕ  ａｎｄ  Ｉ  ｒｅａｃｔ  ｔｈｅ  ｅｘａｃｔ  ｓａｍｅ  ｗａｙ  ｔｏ  ｗａｔｅｒ．  Ｗｅ  ｓｗａｌｌｏｗ  ｉｔ  ｔｏｏ  ｆａｓｔ，  ｗｅ  ｃｈｏｋｅ．  Ｗｅ  ｇｅｔ  ｓｏｍｅ  ｉｎ  ｏｕｒ  ｌｕｎｇｓ，  ｗｅ  ｄｒｏｗｎ．', true);
+	});
+
+	it('privmsg should be truncated correctly', function (done) {
+		spy.args.length.should.equal(2);
+		spy.calledOnce.should.equal(false);
+		spy.calledWith(['PRIVMSG', '#test', 'Ｙｏｕｒ  ｂｏｎｅｓ  ｄｏｎ＇ｔ  ｂｒｅａｋ，  ｍｉｎｅ  ｄｏ．  Ｔｈａｔ＇ｓ  ｃｌｅａｒ．  Ｙｏｕｒ  ｃｅｌｌｓ  ｒｅａｃｔ  ｔｏ  ｂａｃｔｅｒｉａ  ａｎｄ  ｖｉｒｕｓｅｓ  ｄｉｆｆｅｒｅｎｔｌｙ  ｔｈａｎ  ｍｉｎｅ．  Ｙｏｕ  ｄｏｎ＇ｔ  ｇｅｔ  ｓｉｃｋ，  Ｉ  ｄｏ．  Ｔｈａｔ＇ｓ  ａｌｓｏ  ｃｌｅａｒ．  Ｂｕｔ  ｆｏｒ']).should.equal(true);
+		// first
+
+		spy.calledWith(['PRIVMSG', '#test', 'ｓｏｍｅ  ｒｅａｓｏｎ，  ｙｏｕ  ａｎｄ  Ｉ  ｒｅａｃｔ  ｔｈｅ  ｅｘａｃｔ  ｓａｍｅ  ｗａｙ  ｔｏ  ｗａｔｅｒ．  Ｗｅ  ｓｗａｌｌｏｗ  ｉｔ  ｔｏｏ  ｆａｓｔ，  ｗｅ  ｃｈｏｋｅ．  Ｗｅ  ｇｅｔ  ｓｏｍｅ  ｉｎ  ｏｕｒ  ｌｕｎｇｓ，  ｗｅ  ｄｒｏｗｎ．']).should.equal(true);
+		// second
+		
+		spy.reset();
 		done();
 	});
 });
