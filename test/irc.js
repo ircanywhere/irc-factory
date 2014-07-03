@@ -827,3 +827,16 @@ describe('privmsg truncate unicode', function () {
 		done();
 	});
 });
+
+describe("Smiley", function () {
+	beforeEach(function() {
+		socket.privmsg('#smiley-test', ':)', true);
+	});
+
+	it('Sends raw smiley face', function (done) {
+		spy.calledOnce.should.equal(true);
+		spy.calledWith(['PRIVMSG', '#smiley-test', '::)']).should.equal(true);
+		spy.reset();
+		done();
+	});
+});
