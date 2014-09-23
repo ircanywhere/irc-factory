@@ -18,7 +18,7 @@
     "axon": "1.0.0",
     "eventemitter2": "0.4.13",
     "irc-message": "2.0.1",
-    "irc-socket": "2.2.2",
+    "irc-socket": "ircanywhere/irc-socket",
     "json-stringify-safe": "^5.0.0",
     "lodash": "2.4.1",
     "pause-queue": "~0.1.0"
