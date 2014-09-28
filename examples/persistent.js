@@ -35,10 +35,12 @@ function createClient() {
 	rpc.emit('createClient', 'test', {
 		nick : 'simpleircbot',
 		user : 'testuser',
-		server : 'irc.freenode.net',
+		server : 'localhost',
 		realname: 'realbot',
 		port: 6667,
-		secure: false
+		secure: false,
+		retryCount: 2,
+		retryWait: 3000
 	});
 };
 // create a client
